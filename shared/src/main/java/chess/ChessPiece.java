@@ -60,19 +60,32 @@ public class ChessPiece {
         return Objects.hash(pieceColor, type);
     }
 
-    private boolean canMoveHere(ChessBoard board, ChessPosition newPosition) {
+    // -1 = Out of bounds
+    //  0 = Same team piece present
+    //  1 = Enemy team piece present
+    //  2 = Empty space
+    private int moveHereCheck(ChessBoard board, ChessPosition newPosition) {
         int row = newPosition.getRow();
         int col = newPosition.getColumn();
         if (row < 1 || row > 8 || col < 1 || col > 8) {
-            return false;
+            return -1;
         }
         if (board.getPiece(newPosition) == null) {
-            return true;
+            return 2;
         }
         if (pieceColor == ChessGame.TeamColor.BLACK) {
-            return board.getPiece(newPosition).getTeamColor() == ChessGame.TeamColor.WHITE;
+            if (board.getPiece(newPosition).getTeamColor() == ChessGame.TeamColor.BLACK) {
+                return 0;
+            }
+            // enemy white
+            return 1;
         }
-        return board.getPiece(newPosition).getTeamColor() == ChessGame.TeamColor.BLACK;
+        // piece white
+        if (board.getPiece(newPosition).getTeamColor() == ChessGame.TeamColor.WHITE) {
+            return 0;
+        }
+        // enemy black
+        return 1;
     }
     /**
      * Calculates all the positions a chess piece can move to
@@ -86,38 +99,38 @@ public class ChessPiece {
         int row = myPosition.getRow();
         int col = myPosition.getColumn();
         switch (type) {
-            case KING:
-                ChessPosition newPosition = new ChessPosition(row + 1, col); // up
-                if (canMoveHere(board, newPosition)) {
-                    result.add(new ChessMove(myPosition, newPosition, PieceType.KING));
+            case KING: // Check if spaces have an enemy or are empty
+                ChessPosition newPosition = new ChessPosition(row + 1, col - 1); // up and left
+                if (moveHereCheck(board, newPosition) >= 1) {
+                    result.add(new ChessMove(myPosition, newPosition, null));
                 }
-                newPosition = new ChessPosition(row + 1, col + 1); // up right
-                if (canMoveHere(board, newPosition)) {
-                    result.add(new ChessMove(myPosition, newPosition, PieceType.KING));
+                newPosition = new ChessPosition(row + 1, col); // up
+                if (moveHereCheck(board, newPosition) >= 1) {
+                    result.add(new ChessMove(myPosition, newPosition, null));
                 }
-                newPosition = new ChessPosition(row, col + 1); // right
-                if (canMoveHere(board, newPosition)) {
-                    result.add(new ChessMove(myPosition, newPosition, PieceType.KING));
-                }
-                newPosition = new ChessPosition(row - 1, col + 1); // down right
-                if (canMoveHere(board, newPosition)) {
-                    result.add(new ChessMove(myPosition, newPosition, PieceType.KING));
-                }
-                newPosition = new ChessPosition(row - 1, col); // down
-                if (canMoveHere(board, newPosition)) {
-                    result.add(new ChessMove(myPosition, newPosition, PieceType.KING));
-                }
-                newPosition = new ChessPosition(row - 1, col - 1); // down left
-                if (canMoveHere(board, newPosition)) {
-                    result.add(new ChessMove(myPosition, newPosition, PieceType.KING));
+                newPosition = new ChessPosition(row + 1, col + 1); // up and right
+                if (moveHereCheck(board, newPosition) >= 1) {
+                    result.add(new ChessMove(myPosition, newPosition, null));
                 }
                 newPosition = new ChessPosition(row, col - 1); // left
-                if (canMoveHere(board, newPosition)) {
-                    result.add(new ChessMove(myPosition, newPosition, PieceType.KING));
+                if (moveHereCheck(board, newPosition) >= 1) {
+                    result.add(new ChessMove(myPosition, newPosition, null));
                 }
-                newPosition = new ChessPosition(row + 1, col - 1); // up left
-                if (canMoveHere(board, newPosition)) {
-                    result.add(new ChessMove(myPosition, newPosition, PieceType.KING));
+                newPosition = new ChessPosition(row, col + 1); // right
+                if (moveHereCheck(board, newPosition) >= 1) {
+                    result.add(new ChessMove(myPosition, newPosition, null));
+                }
+                newPosition = new ChessPosition(row - 1, col - 1); // down and left
+                if (moveHereCheck(board, newPosition) >= 1) {
+                    result.add(new ChessMove(myPosition, newPosition, null));
+                }
+                newPosition = new ChessPosition(row - 1, col); // down
+                if (moveHereCheck(board, newPosition) >= 1) {
+                    result.add(new ChessMove(myPosition, newPosition, null));
+                }
+                newPosition = new ChessPosition(row - 1, col + 1); // down and right
+                if (moveHereCheck(board, newPosition) >= 1) {
+                    result.add(new ChessMove(myPosition, newPosition, null));
                 }
                 break;
             case QUEEN:
