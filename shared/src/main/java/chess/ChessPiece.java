@@ -98,9 +98,10 @@ public class ChessPiece {
         HashSet<ChessMove> result = new HashSet<ChessMove>();
         int row = myPosition.getRow();
         int col = myPosition.getColumn();
+        ChessPosition newPosition = new ChessPosition(row, col);
         switch (type) {
             case KING: // Check if spaces have an enemy or are empty
-                ChessPosition newPosition = new ChessPosition(row + 1, col - 1); // up and left
+                newPosition = new ChessPosition(row + 1, col - 1); // up and left
                 if (moveHereCheck(board, newPosition) >= 1) {
                     result.add(new ChessMove(myPosition, newPosition, null));
                 }
@@ -133,15 +134,150 @@ public class ChessPiece {
                     result.add(new ChessMove(myPosition, newPosition, null));
                 }
                 break;
-            case QUEEN:
+            case QUEEN, ROOK: // check straight lines
+                newPosition = new ChessPosition(row + 1, col); // up
+                while (moveHereCheck(board, newPosition) == 2) {
+                    result.add(new ChessMove(myPosition, newPosition, null));
+                    newPosition = new ChessPosition(row + 1, col);
+                }
+                if (moveHereCheck(board, newPosition) == 1) { // check for enemy at end
+                    result.add(new ChessMove(myPosition, newPosition, null));
+                }
+                newPosition = new ChessPosition(row, col + 1); // right
+                while (moveHereCheck(board, newPosition) == 2) {
+                    result.add(new ChessMove(myPosition, newPosition, null));
+                    newPosition = new ChessPosition(row, col + 1);
+                }
+                if (moveHereCheck(board, newPosition) == 1) { // check for enemy at end
+                    result.add(new ChessMove(myPosition, newPosition, null));
+                }
+                newPosition = new ChessPosition(row - 1, col); // down
+                while (moveHereCheck(board, newPosition) == 2) {
+                    result.add(new ChessMove(myPosition, newPosition, null));
+                    newPosition = new ChessPosition(row - 1, col);
+                }
+                if (moveHereCheck(board, newPosition) == 1) { // check for enemy at end
+                    result.add(new ChessMove(myPosition, newPosition, null));
+                }
+                newPosition = new ChessPosition(row, col - 1); // left
+                while (moveHereCheck(board, newPosition) == 2) {
+                    result.add(new ChessMove(myPosition, newPosition, null));
+                    newPosition = new ChessPosition(row, col - 1);
+                }
+                if (moveHereCheck(board, newPosition) == 1) { // check for enemy at end
+                    result.add(new ChessMove(myPosition, newPosition, null));
+                }
+                if (type == PieceType.ROOK) {
+                    break; // Queen moves on to diagonals
+                }
+            case BISHOP: // check diagonals
+                newPosition = new ChessPosition(row + 1, col + 1); // up and right
+                while (moveHereCheck(board, newPosition) == 2) {
+                    result.add(new ChessMove(myPosition, newPosition, null));
+                    newPosition = new ChessPosition(row + 1, col + 1);
+                }
+                if (moveHereCheck(board, newPosition) == 1) { // check for enemy at end
+                    result.add(new ChessMove(myPosition, newPosition, null));
+                }
+                newPosition = new ChessPosition(row - 1, col + 1); // down and right
+                while (moveHereCheck(board, newPosition) == 2) {
+                    result.add(new ChessMove(myPosition, newPosition, null));
+                    newPosition = new ChessPosition(row - 1, col + 1);
+                }
+                if (moveHereCheck(board, newPosition) == 1) { // check for enemy at end
+                    result.add(new ChessMove(myPosition, newPosition, null));
+                }
+                newPosition = new ChessPosition(row - 1, col - 1); // down and left
+                while (moveHereCheck(board, newPosition) == 2) {
+                    result.add(new ChessMove(myPosition, newPosition, null));
+                    newPosition = new ChessPosition(row - 1, col - 1);
+                }
+                if (moveHereCheck(board, newPosition) == 1) { // check for enemy at end
+                    result.add(new ChessMove(myPosition, newPosition, null));
+                }
+                newPosition = new ChessPosition(row + 1, col - 1); // up and left
+                while (moveHereCheck(board, newPosition) == 2) {
+                    result.add(new ChessMove(myPosition, newPosition, null));
+                    newPosition = new ChessPosition(row + 1, col - 1);
+                }
+                if (moveHereCheck(board, newPosition) == 1) { // check for enemy at end
+                    result.add(new ChessMove(myPosition, newPosition, null));
+                }
                 break;
-            case BISHOP:
-                break;
-            case KNIGHT:
-                break;
-            case ROOK:
+            case KNIGHT: // L shapes
+                newPosition = new ChessPosition(row + 2, col - 1); // up 2, left 1
+                if (moveHereCheck(board, newPosition) >= 1) {
+                    result.add(new ChessMove(myPosition, newPosition, null));
+                }
+                newPosition = new ChessPosition(row + 2, col + 1); // up 2, right 1
+                if (moveHereCheck(board, newPosition) >= 1) {
+                    result.add(new ChessMove(myPosition, newPosition, null));
+                }
+                newPosition = new ChessPosition(row + 1, col - 2); // up 1, left 2
+                if (moveHereCheck(board, newPosition) >= 1) {
+                    result.add(new ChessMove(myPosition, newPosition, null));
+                }
+                newPosition = new ChessPosition(row + 1, col + 2); // up 1, right 2
+                if (moveHereCheck(board, newPosition) >= 1) {
+                    result.add(new ChessMove(myPosition, newPosition, null));
+                }
+                newPosition = new ChessPosition(row - 1, col - 2); // down 1, left 2
+                if (moveHereCheck(board, newPosition) >= 1) {
+                    result.add(new ChessMove(myPosition, newPosition, null));
+                }
+                newPosition = new ChessPosition(row + 1, col + 2); // down 1, right 2
+                if (moveHereCheck(board, newPosition) >= 1) {
+                    result.add(new ChessMove(myPosition, newPosition, null));
+                }
+                newPosition = new ChessPosition(row - 2, col - 1); // down 2, left 1
+                if (moveHereCheck(board, newPosition) >= 1) {
+                    result.add(new ChessMove(myPosition, newPosition, null));
+                }
+                newPosition = new ChessPosition(row - 2, col + 1); // down 2, right 1
+                if (moveHereCheck(board, newPosition) >= 1) {
+                    result.add(new ChessMove(myPosition, newPosition, null));
+                }
                 break;
             case PAWN:
+                if (pieceColor == ChessGame.TeamColor.WHITE) { // White moves up
+                    // Basic forward motion
+                    newPosition = new ChessPosition(row + 1, col);
+                    if (moveHereCheck(board, newPosition) == 2) { // Space MUST be empty
+                        result.add(new ChessMove(myPosition, newPosition, null));
+                    }
+                    newPosition = new ChessPosition(row + 2, col);
+                    if (row == 1 && moveHereCheck(board, newPosition) == 2) { // Space MUST be empty
+                        result.add(new ChessMove(myPosition, newPosition, null));
+                    }
+                    // Diagonal enemy capture
+                    newPosition = new ChessPosition(row + 1, col - 1);
+                    if (moveHereCheck(board, newPosition) == 1) { // Space MUST have enemy
+                        result.add(new ChessMove(myPosition, newPosition, null));
+                    }
+                    newPosition = new ChessPosition(row + 1, col + 1);
+                    if (moveHereCheck(board, newPosition) == 1) { // Space MUST have enemy
+                        result.add(new ChessMove(myPosition, newPosition, null));
+                    }
+                } else { // Black moves down
+                    // Basic forward motion
+                    newPosition = new ChessPosition(row - 1, col);
+                    if (moveHereCheck(board, newPosition) == 2) { // Space MUST be empty
+                        result.add(new ChessMove(myPosition, newPosition, null));
+                    }
+                    newPosition = new ChessPosition(row - 2, col);
+                    if (row == 8 && moveHereCheck(board, newPosition) == 2) { // Space MUST be empty
+                        result.add(new ChessMove(myPosition, newPosition, null));
+                    }
+                    // Diagonal enemy capture
+                    newPosition = new ChessPosition(row - 1, col - 1);
+                    if (moveHereCheck(board, newPosition) == 1) { // Space MUST have enemy
+                        result.add(new ChessMove(myPosition, newPosition, null));
+                    }
+                    newPosition = new ChessPosition(row - 1, col + 1);
+                    if (moveHereCheck(board, newPosition) == 1) { // Space MUST have enemy
+                        result.add(new ChessMove(myPosition, newPosition, null));
+                    }
+                }
                 break;
         }
         return result;
