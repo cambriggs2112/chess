@@ -57,10 +57,18 @@ public class ChessGame {
         } else {
             ArrayList<ChessMove> result = new ArrayList<ChessMove>();
             for (ChessMove move : board.getPiece(startPosition).pieceMoves(board, startPosition)) {
-                // Add move if it does not put king in check
+                ChessPiece startPiece = board.getPiece(startPosition);
+                ChessPiece endPiece = board.getPiece(move.getEndPosition());
+                board.addPiece(move.getEndPosition(), startPiece);
+                board.addPiece(startPosition, null);
+                if (!isInCheck(team)) {
+                    result.add(move);
+                }
+                board.addPiece(move.getEndPosition(), endPiece);
+                board.addPiece(startPosition, startPiece);
             }
             return result;
-        } // Turn check is in makeMove
+        }
     }
 
     /**
@@ -93,6 +101,32 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
+        ChessPosition kingPos = null;
+        for (int row = 1; row <= 8; row++) {
+            for (int col = 1; col <= 8; col++) {
+                ChessPosition pos = new ChessPosition(row, col);
+                ChessPiece piece = board.getPiece(pos);
+                if (piece != null && piece.getPieceType() == ChessPiece.PieceType.KING && piece.getTeamColor() == teamColor) {
+                    kingPos = pos;
+                }
+            }
+        }
+        if (kingPos == null) {
+            return false;
+        }
+        for (int row = 1; row <= 8; row++) {
+            for (int col = 1; col <= 8; col++) {
+                ChessPosition pos = new ChessPosition(row, col);
+                ChessPiece piece = board.getPiece(pos);
+                if (piece != null && piece.getTeamColor() != teamColor) {
+                    for (ChessMove move : piece.pieceMoves(board, pos)) {
+                        if (move.getEndPosition().equals(kingPos)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
         return false;
     }
 
