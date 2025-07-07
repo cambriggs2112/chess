@@ -1,6 +1,7 @@
 package chess;
 
 import java.util.Collection;
+import java.util.ArrayList;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -51,7 +52,15 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        return null;
+        if (board.getPiece(startPosition) == null) {
+            return null;
+        } else {
+            ArrayList<ChessMove> result = new ArrayList<ChessMove>();
+            for (ChessMove move : board.getPiece(startPosition).pieceMoves(board, startPosition)) {
+                // Add move if it does not put king in check
+            }
+            return result;
+        } // Turn check is in makeMove
     }
 
     /**
@@ -61,7 +70,11 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-
+        if (board.getPiece(move.getStartPosition()) == null || board.getPiece(move.getStartPosition()).getTeamColor() != team || validMoves(move.getStartPosition()) == null || !validMoves(move.getStartPosition()).contains(move)) {
+            throw new InvalidMoveException();
+        }
+        board.addPiece(move.getEndPosition(), board.getPiece(move.getStartPosition()));
+        board.addPiece(move.getStartPosition(), null);
     }
 
     /**
