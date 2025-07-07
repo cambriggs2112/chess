@@ -63,7 +63,7 @@ public class ChessGame {
                 board.addPiece(startPosition, null);
                 if (!isInCheck(team)) {
                     result.add(move);
-                }
+                } // Would move put team in check?
                 board.addPiece(move.getEndPosition(), endPiece);
                 board.addPiece(startPosition, startPiece);
             }
@@ -137,7 +137,30 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        return false;
+        if (!isInCheck(teamColor)) {
+            return false;
+        }
+        for (int row = 1; row <= 8; row++) {
+            for (int col = 1; col <= 8; col++) {
+                ChessPosition pos = new ChessPosition(row, col);
+                ChessPiece piece = board.getPiece(pos);
+                if (piece != null && piece.getTeamColor() == teamColor) {
+                    for (ChessMove move : piece.pieceMoves(board, pos)) {
+                        ChessPiece endPiece = board.getPiece(move.getEndPosition());
+                        board.addPiece(move.getEndPosition(), piece);
+                        board.addPiece(pos, null);
+                        if (!isInCheck(teamColor)) {
+                            board.addPiece(move.getEndPosition(), endPiece);
+                            board.addPiece(pos, piece);
+                            return false;
+                        }
+                        board.addPiece(move.getEndPosition(), endPiece);
+                        board.addPiece(pos, piece);
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     /**
@@ -148,7 +171,18 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        return false;
+        if (isInCheck(teamColor)) {
+            return false;
+        }
+        for (int row = 1; row <= 8; row++) {
+            for (int col = 1; col <= 8; col++) {
+                ChessPosition pos = new ChessPosition(row, col);
+                if (!validMoves(pos).isEmpty()) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     /**
