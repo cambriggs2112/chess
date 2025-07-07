@@ -70,8 +70,17 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        if (board.getPiece(move.getStartPosition()) == null || board.getPiece(move.getStartPosition()).getTeamColor() != team || validMoves(move.getStartPosition()) == null || !validMoves(move.getStartPosition()).contains(move)) {
-            throw new InvalidMoveException();
+        if (board.getPiece(move.getStartPosition()) == null) {
+            throw new InvalidMoveException("There is no piece here.");
+        }
+        if (board.getPiece(move.getStartPosition()).getTeamColor() != team) {
+            throw new InvalidMoveException("This is the opposite team.");
+        }
+        if (validMoves(move.getStartPosition()) == null) {
+            throw new InvalidMoveException("This piece has no valid moves.");
+        }
+        if (!validMoves(move.getStartPosition()).contains(move)) {
+            throw new InvalidMoveException("This move cannot be made with this piece.");
         }
         board.addPiece(move.getEndPosition(), board.getPiece(move.getStartPosition()));
         board.addPiece(move.getStartPosition(), null);
