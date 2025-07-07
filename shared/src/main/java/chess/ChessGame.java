@@ -95,8 +95,9 @@ public class ChessGame {
                 }
             }
             // add castling moves
-            if (startPiece.getPieceType() == ChessPiece.PieceType.KING) {
+            if (startPiece.getPieceType() == ChessPiece.PieceType.KING && startPosition.getColumn() == 5) {
                 if (startPiece.getTeamColor() == TeamColor.WHITE
+                        && startPosition.getRow() == 1
                         && whiteKingNeverMoved
                         && !isInCheck(TeamColor.WHITE)) {
                     // Left
@@ -118,6 +119,7 @@ public class ChessGame {
                     }
                 }
                 if (startPiece.getTeamColor() == TeamColor.BLACK
+                        && startPosition.getRow() == 8
                         && blackKingNeverMoved
                         && !isInCheck(TeamColor.BLACK)) {
                     // Left
