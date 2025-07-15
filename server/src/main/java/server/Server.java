@@ -3,6 +3,19 @@ package server;
 import spark.*;
 
 public class Server {
+    public static class ClearApplicationHandler {}
+
+    public static class CreateGameHandler {}
+
+    public static class JoinGameHandler {}
+
+    public static class ListGamesHandler {}
+
+    public static class LoginHandler {}
+
+    public static class LogoutHandler {}
+
+    public static class RegisterHandler {}
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
