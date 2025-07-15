@@ -1,7 +1,10 @@
 package service;
 
 import java.util.ArrayList;
+
+import chess.ChessGame;
 import dataaccess.*;
+import model.AuthData;
 import model.GameData;
 
 public class ListGamesService {
@@ -18,7 +21,16 @@ public class ListGamesService {
         this.user = user;
     }
 
-    public ListGamesResult listGames(ListGamesRequest request) {
-        return null;
+    public ListGamesResult listGames(ListGamesRequest request) throws UnauthorizedException, InternalServerErrorException {
+        ArrayList<GameData> result;
+        try {
+            if (auth.getAuth(request.authToken()) == null) {
+                throw new UnauthorizedException("[401] Unauthorized: Unknown authorization token provided whilst attempting to list games.");
+            }
+            result = game.listGames();
+        } catch (DataAccessException e) {
+            throw new InternalServerErrorException("[500] Internal Server Error occurred whilst attempting to list games: " + e);
+        }
+        return new ListGamesResult(result);
     }
 }

@@ -21,9 +21,6 @@ public class CreateGameService {
 
     public CreateGameResult createGame(CreateGameRequest request) throws BadRequestException, UnauthorizedException, InternalServerErrorException {
         int gameID = 0;
-        if (request.authToken().isEmpty()) {
-            throw new BadRequestException("[400] Bad Request: Authorization token is required to create game.");
-        }
         if (request.gameName().isEmpty()) {
             throw new BadRequestException("[400] Bad Request: Game name is required to create game.");
         }

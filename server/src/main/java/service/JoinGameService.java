@@ -20,15 +20,15 @@ public class JoinGameService {
 
     public JoinGameResult joinGame(JoinGameRequest request) throws BadRequestException, UnauthorizedException, ForbiddenException, InternalServerErrorException {
         ChessGame.TeamColor teamColor;
-        if (request.authToken().isEmpty()) {
-            throw new BadRequestException("[400] Bad Request: Authorization token is required to join game.");
+        if (request.playerColor().isEmpty()) {
+            throw new BadRequestException("[400] Bad Request: Player color is required and must be WHITE or BLACK (not case sensitive) to join game.");
         }
         if (request.playerColor().equalsIgnoreCase("white")) {
             teamColor = ChessGame.TeamColor.WHITE;
         } else if (request.playerColor().equalsIgnoreCase("black")) {
             teamColor = ChessGame.TeamColor.BLACK;
         } else {
-            throw new BadRequestException("[400] Bad Request: Unable to join game since \"" + request.playerColor() + "\" is not a valid player color.");
+            throw new BadRequestException("[400] Bad Request: Player color must be WHITE or BLACK (not case sensitive).");
         }
         try {
             AuthData thisAuth = auth.getAuth(request.authToken());
