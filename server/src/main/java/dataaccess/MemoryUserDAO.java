@@ -18,7 +18,7 @@ public class MemoryUserDAO implements UserDAO {
         userDatabase.add(newUser);
     }
 
-    public UserData getUser(String username) {
+    public UserData getUser(String username) throws DataAccessException {
         for (UserData u : userDatabase) {
             if (u.username().equals(username)) {
                 return u;
@@ -27,7 +27,7 @@ public class MemoryUserDAO implements UserDAO {
         return null;
     }
 
-    public ArrayList<UserData> listUsers() {
+    public ArrayList<UserData> listUsers() throws DataAccessException {
         return userDatabase;
     }
 
@@ -48,7 +48,7 @@ public class MemoryUserDAO implements UserDAO {
         userDatabase.remove(u);
     }
 
-    public void clear() {
+    public void clear() throws DataAccessException {
         userDatabase.clear();
     }
 }

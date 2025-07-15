@@ -17,7 +17,7 @@ public class MemoryGameDAO implements GameDAO {
         gameDatabase.add(newGame);
     }
 
-    public GameData getGame(int gameID) {
+    public GameData getGame(int gameID) throws DataAccessException {
         for (GameData g : gameDatabase) {
             if (g.gameID() == gameID) {
                 return g;
@@ -26,7 +26,7 @@ public class MemoryGameDAO implements GameDAO {
         return null;
     }
 
-    public ArrayList<GameData> listGames() {
+    public ArrayList<GameData> listGames() throws DataAccessException {
         return gameDatabase;
     }
 
@@ -47,7 +47,7 @@ public class MemoryGameDAO implements GameDAO {
         gameDatabase.remove(g);
     }
 
-    public void clear() {
+    public void clear() throws DataAccessException {
         gameDatabase.clear();
     }
 }

@@ -5,9 +5,9 @@ import model.GameData;
 
 public interface GameDAO {
     void createGame(GameData newAuth) throws DataAccessException;
-    GameData getGame(int gameID);
-    ArrayList<GameData> listGames();
+    GameData getGame(int gameID) throws DataAccessException;
+    ArrayList<GameData> listGames() throws DataAccessException;
     void updateGame(int gameID) throws DataAccessException;
     void deleteGame(int gameID) throws DataAccessException;
-    void clear();
+    void clear() throws DataAccessException;
 }
