@@ -20,10 +20,10 @@ public class LoginService {
 
     public LoginResult login(LoginRequest request) throws BadRequestException, UnauthorizedException, InternalServerErrorException {
         String authToken;
-        if (request.username().isEmpty()) {
+        if (request.username() == null || request.username().isEmpty()) {
             throw new BadRequestException("[400] Bad Request: Username is required to login.");
         }
-        if (request.password().isEmpty()) {
+        if (request.password() == null || request.password().isEmpty()) {
             throw new BadRequestException("[400] Bad Request: Password is required to login.");
         }
         try {

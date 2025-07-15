@@ -24,7 +24,7 @@ public class ListGamesService {
     public ListGamesResult listGames(ListGamesRequest request) throws UnauthorizedException, InternalServerErrorException {
         ArrayList<GameData> result;
         try {
-            if (auth.getAuth(request.authToken()) == null) {
+            if (request.authToken() == null || auth.getAuth(request.authToken()) == null) {
                 throw new UnauthorizedException("[401] Unauthorized: Unknown authorization token provided whilst attempting to list games.");
             }
             result = game.listGames();

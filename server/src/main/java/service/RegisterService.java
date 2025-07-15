@@ -20,13 +20,13 @@ public class RegisterService {
 
     public RegisterResult register(RegisterRequest request) throws BadRequestException, ForbiddenException, InternalServerErrorException {
         String authToken;
-        if (request.username().isEmpty()) {
+        if (request.username() == null || request.username().isEmpty()) {
             throw new BadRequestException("[400] Bad Request: Username is required to register.");
         }
-        if (request.password().isEmpty()) {
+        if (request.password() == null || request.password().isEmpty()) {
             throw new BadRequestException("[400] Bad Request: Password is required to register.");
         }
-        if (request.email().isEmpty()) {
+        if (request.email() == null || request.email().isEmpty()) {
             throw new BadRequestException("[400] Bad Request: Email is required to register.");
         }
         try {

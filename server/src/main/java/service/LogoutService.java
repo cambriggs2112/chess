@@ -18,7 +18,7 @@ public class LogoutService {
 
     public LogoutResult logout(LogoutRequest request) throws UnauthorizedException, InternalServerErrorException {
         try {
-            if (auth.getAuth(request.authToken()) == null) {
+            if (request.authToken() == null || auth.getAuth(request.authToken()) == null) {
                 throw new UnauthorizedException("[401] Unauthorized: Unknown authorization token provided whilst attempting to logout.");
             }
             auth.deleteAuth(request.authToken());

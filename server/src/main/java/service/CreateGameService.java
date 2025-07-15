@@ -21,11 +21,11 @@ public class CreateGameService {
 
     public CreateGameResult createGame(CreateGameRequest request) throws BadRequestException, UnauthorizedException, InternalServerErrorException {
         int gameID = 0;
-        if (request.gameName().isEmpty()) {
+        if (request.gameName() == null || request.gameName().isEmpty()) {
             throw new BadRequestException("[400] Bad Request: Game name is required to create game.");
         }
         try {
-            if (auth.getAuth(request.authToken()) == null) {
+            if (request.authToken() == null || auth.getAuth(request.authToken()) == null) {
                 throw new UnauthorizedException("[401] Unauthorized: Unknown authorization token provided whilst attempting to create game.");
             }
             gameID = UUID.randomUUID().hashCode(); // Get pseudorandom, likely unique int by hashing UUID

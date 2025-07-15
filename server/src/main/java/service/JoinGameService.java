@@ -5,7 +5,7 @@ import dataaccess.*;
 import model.*;
 
 public class JoinGameService {
-    public record JoinGameRequest(String authToken, String playerColor, int gameID) {}
+    public record JoinGameRequest(String authToken, ChessGame.TeamColor playerColor, int gameID) {}
     public record JoinGameResult() {}
 
     private AuthDAO auth;
@@ -19,16 +19,14 @@ public class JoinGameService {
     }
 
     public JoinGameResult joinGame(JoinGameRequest request) throws BadRequestException, UnauthorizedException, ForbiddenException, InternalServerErrorException {
-        ChessGame.TeamColor teamColor;
-        if (request.playerColor().isEmpty()) {
-            throw new BadRequestException("[400] Bad Request: Player color is required and must be WHITE or BLACK (not case sensitive) to join game.");
+        if (request.authToken() == null) {
+            throw new UnauthorizedException("[401] Unauthorized: Unknown authorization token provided whilst attempting to join game.");
         }
-        if (request.playerColor().equalsIgnoreCase("white")) {
-            teamColor = ChessGame.TeamColor.WHITE;
-        } else if (request.playerColor().equalsIgnoreCase("black")) {
-            teamColor = ChessGame.TeamColor.BLACK;
-        } else {
-            throw new BadRequestException("[400] Bad Request: Player color must be WHITE or BLACK (not case sensitive).");
+        if (request.playerColor() == null) {
+            throw new BadRequestException("[400] Bad Request: Team color is required and must be BLACK or WHITE to join game.");
+        }
+        if (request.gameID() < 0) {
+            throw new UnauthorizedException("[400] Bad Request: Invalid game ID provided whilst attempting to join game.");
         }
         try {
             AuthData thisAuth = auth.getAuth(request.authToken());
@@ -40,9 +38,9 @@ public class JoinGameService {
             if (thisGame == null) {
                 throw new ForbiddenException("[403] Forbidden: Unknown game ID provided whilst attempting to join game.");
             }
-            if (teamColor == ChessGame.TeamColor.WHITE && thisGame.whiteUsername().isEmpty()) {
+            if (request.playerColor() == ChessGame.TeamColor.WHITE && thisGame.whiteUsername().isEmpty()) {
                 newGame = new GameData(request.gameID(), thisAuth.username(), thisGame.blackUsername(), thisGame.gameName(), thisGame.game());
-            } else if (teamColor == ChessGame.TeamColor.BLACK && thisGame.blackUsername().isEmpty()) {
+            } else if (request.playerColor() == ChessGame.TeamColor.BLACK && thisGame.blackUsername().isEmpty()) {
                 newGame = new GameData(request.gameID(), thisGame.whiteUsername(), thisAuth.username(), thisGame.gameName(), thisGame.game());
             } else {
                 throw new ForbiddenException("[403] Forbidden: Unable to join game since the provided team is already taken.");
