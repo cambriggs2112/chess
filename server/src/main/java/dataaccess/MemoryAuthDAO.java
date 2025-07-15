@@ -12,7 +12,7 @@ public class MemoryAuthDAO implements AuthDAO {
 
     public void createAuth(AuthData newAuth) throws DataAccessException {
         if (getAuth(newAuth.authToken()) != null) {
-            throw new DataAccessException("authToken already exists for createAuth()");
+            throw new DataAccessException("Unable to create authorization data: Authorization token already exists.");
         }
         authDatabase.add(newAuth);
     }
@@ -30,19 +30,19 @@ public class MemoryAuthDAO implements AuthDAO {
         return authDatabase;
     }
 
-    public void updateAuth(String authToken) throws DataAccessException {
-        AuthData a = getAuth(authToken);
+    public void updateAuth(AuthData newAuth) throws DataAccessException {
+        AuthData a = getAuth(newAuth.authToken());
         if (a == null) {
-            throw new DataAccessException("authToken not found for updateAuth()");
+            throw new DataAccessException("Unable to update authorization data: Authorization token not found.");
         }
         int index = authDatabase.indexOf(a);
-        authDatabase.set(index, a);
+        authDatabase.set(index, newAuth);
     }
 
     public void deleteAuth(String authToken) throws DataAccessException {
         AuthData a = getAuth(authToken);
         if (a == null) {
-            throw new DataAccessException("authToken not found for deleteAuth()");
+            throw new DataAccessException("Unable to delete authorization data: Authorization token not found.");
         }
         authDatabase.remove(a);
     }

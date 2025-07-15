@@ -1,12 +1,9 @@
 package service;
 
-import dataaccess.AuthDAO;
-import dataaccess.GameDAO;
-import dataaccess.UserDAO;
+import dataaccess.*;
 
 public class RegisterService {
     public record RegisterRequest(String username, String password, String email) {}
-
     public record RegisterResult(String username, String authToken) {}
 
     private AuthDAO auth;

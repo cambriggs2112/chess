@@ -12,7 +12,7 @@ public class MemoryGameDAO implements GameDAO {
 
     public void createGame(GameData newGame) throws DataAccessException {
         if (getGame(newGame.gameID()) != null) {
-            throw new DataAccessException("gameID already exists for createGame()");
+            throw new DataAccessException("Unable to create game data: Game ID already exists.");
         }
         gameDatabase.add(newGame);
     }
@@ -30,19 +30,19 @@ public class MemoryGameDAO implements GameDAO {
         return gameDatabase;
     }
 
-    public void updateGame(int gameID) throws DataAccessException {
-        GameData g = getGame(gameID);
+    public void updateGame(GameData newGame) throws DataAccessException {
+        GameData g = getGame(newGame.gameID());
         if (g == null) {
-            throw new DataAccessException("gameID not found for updateGame()");
+            throw new DataAccessException("Unable to update game data: Game ID not found.");
         }
         int index = gameDatabase.indexOf(g);
-        gameDatabase.set(index, g);
+        gameDatabase.set(index, newGame);
     }
 
     public void deleteGame(int gameID) throws DataAccessException {
         GameData g = getGame(gameID);
         if (g == null) {
-            throw new DataAccessException("gameID not found for deleteGame()");
+            throw new DataAccessException("Unable to delete game data: Game ID not found.");
         }
         gameDatabase.remove(g);
     }

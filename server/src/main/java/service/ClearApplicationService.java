@@ -4,7 +4,6 @@ import dataaccess.*;
 
 public class ClearApplicationService {
     public record ClearApplicationRequest() {}
-
     public record ClearApplicationResult() {}
 
     private AuthDAO auth;
@@ -17,8 +16,14 @@ public class ClearApplicationService {
         this.user = user;
     }
 
-    public ClearApplicationResult clearApplication(ClearApplicationRequest request) {
-
-        return null;
+    public ClearApplicationResult clearApplication(ClearApplicationRequest request) throws InternalServerErrorException {
+        try {
+            auth.clear();
+            game.clear();
+            user.clear();
+        } catch (DataAccessException e) {
+            throw new InternalServerErrorException("[500] Internal Server Error occurred whilst attempting to clear application: " + e);
+        }
+        return new ClearApplicationResult();
     }
 }

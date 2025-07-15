@@ -13,7 +13,7 @@ public class MemoryUserDAO implements UserDAO {
 
     public void createUser(UserData newUser) throws DataAccessException {
         if (getUser(newUser.username()) != null) {
-            throw new DataAccessException("username already exists for createUser()");
+            throw new DataAccessException("Unable to create user data: Username already exists.");
         }
         userDatabase.add(newUser);
     }
@@ -31,19 +31,19 @@ public class MemoryUserDAO implements UserDAO {
         return userDatabase;
     }
 
-    public void updateUser(String username) throws DataAccessException {
-        UserData u = getUser(username);
+    public void updateUser(UserData newUser) throws DataAccessException {
+        UserData u = getUser(newUser.username());
         if (u == null) {
-            throw new DataAccessException("username not found for updateUser()");
+            throw new DataAccessException("Unable to update user data: Username not found.");
         }
         int index = userDatabase.indexOf(u);
-        userDatabase.set(index, u);
+        userDatabase.set(index, newUser);
     }
 
     public void deleteUser(String username) throws DataAccessException {
         UserData u = getUser(username);
         if (u == null) {
-            throw new DataAccessException("username not found for deleteUser()");
+            throw new DataAccessException("Unable to delete user data: Username not found.");
         }
         userDatabase.remove(u);
     }

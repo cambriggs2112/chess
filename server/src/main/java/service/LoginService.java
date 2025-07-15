@@ -1,12 +1,9 @@
 package service;
 
-import dataaccess.AuthDAO;
-import dataaccess.GameDAO;
-import dataaccess.UserDAO;
+import dataaccess.*;
 
 public class LoginService {
     public record LoginRequest(String username, String password) {}
-
     public record LoginResult(String username, String authToken) {}
 
     private AuthDAO auth;

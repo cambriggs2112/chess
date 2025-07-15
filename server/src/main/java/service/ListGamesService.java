@@ -1,15 +1,11 @@
 package service;
 
 import java.util.ArrayList;
-
-import dataaccess.AuthDAO;
-import dataaccess.GameDAO;
-import dataaccess.UserDAO;
+import dataaccess.*;
 import model.GameData;
 
 public class ListGamesService {
     public record ListGamesRequest(String authToken) {}
-
     public record ListGamesResult(ArrayList<GameData> games) {}
 
     private AuthDAO auth;

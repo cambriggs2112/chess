@@ -1,12 +1,9 @@
 package service;
 
-import dataaccess.AuthDAO;
-import dataaccess.GameDAO;
-import dataaccess.UserDAO;
+import dataaccess.*;
 
 public class LogoutService {
     public record LogoutRequest(String authToken) {}
-
     public record LogoutResult() {}
 
     private AuthDAO auth;
