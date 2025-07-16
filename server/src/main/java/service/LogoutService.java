@@ -19,11 +19,11 @@ public class LogoutService {
     public LogoutResult logout(LogoutRequest request) throws ServiceException {
         try {
             if (request.authToken() == null || auth.getAuth(request.authToken()) == null) {
-                throw new ServiceException("Unauthorized: Unknown authorization token provided whilst attempting to logout.", 401);
+                throw new ServiceException("ERROR: Unauthorized: Unknown authorization token provided whilst attempting to logout.", 401);
             }
             auth.deleteAuth(request.authToken());
         } catch (DataAccessException e) {
-            throw new ServiceException("Internal Server Error occurred whilst attempting to logout: " + e, 500);
+            throw new ServiceException("ERROR: Internal Server Error occurred whilst attempting to logout: " + e, 500);
         }
         return new LogoutResult();
     }

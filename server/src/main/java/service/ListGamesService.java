@@ -10,7 +10,7 @@ import model.GameData;
 public class ListGamesService {
     public record ListGamesRequest(String authToken) {}
     public record ListGamesResult(ArrayList<ListGamesResultElement> games) {}
-    public record ListGamesResultElement(int gameID, String whiteUsername, String blackUsername, String gameName) {}
+    public record ListGamesResultElement(Integer gameID, String whiteUsername, String blackUsername, String gameName) {}
 
     private AuthDAO auth;
     private GameDAO game;
@@ -27,11 +27,11 @@ public class ListGamesService {
         ArrayList<ListGamesResultElement> result = new ArrayList<ListGamesResultElement>();
         try {
             if (request.authToken() == null || auth.getAuth(request.authToken()) == null) {
-                throw new ServiceException("Unauthorized: Unknown authorization token provided whilst attempting to list games.", 401);
+                throw new ServiceException("ERROR: Unauthorized: Unknown authorization token provided whilst attempting to list games.", 401);
             }
             gameList = game.listGames();
         } catch (DataAccessException e) {
-            throw new ServiceException("Internal Server Error occurred whilst attempting to list games: " + e, 500);
+            throw new ServiceException("ERROR: Internal Server Error occurred whilst attempting to list games: " + e, 500);
         }
         for (GameData thisGame : gameList) {
             result.add(new ListGamesResultElement(thisGame.gameID(), thisGame.whiteUsername(), thisGame.blackUsername(), thisGame.gameName()));

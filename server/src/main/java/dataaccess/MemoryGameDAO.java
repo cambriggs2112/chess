@@ -17,9 +17,9 @@ public class MemoryGameDAO implements GameDAO {
         gameDatabase.add(newGame);
     }
 
-    public GameData getGame(int gameID) throws DataAccessException {
+    public GameData getGame(Integer gameID) throws DataAccessException {
         for (GameData g : gameDatabase) {
-            if (g.gameID() == gameID) {
+            if (g.gameID().equals(gameID)) {
                 return g;
             }
         }
@@ -39,7 +39,7 @@ public class MemoryGameDAO implements GameDAO {
         gameDatabase.set(index, newGame);
     }
 
-    public void deleteGame(int gameID) throws DataAccessException {
+    public void deleteGame(Integer gameID) throws DataAccessException {
         GameData g = getGame(gameID);
         if (g == null) {
             throw new DataAccessException("Unable to delete game data: Game ID not found.");

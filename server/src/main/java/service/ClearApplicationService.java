@@ -22,7 +22,7 @@ public class ClearApplicationService {
             game.clear();
             user.clear();
         } catch (DataAccessException e) {
-            throw new ServiceException("Internal Server Error occurred whilst attempting to clear application: " + e, 500);
+            throw new ServiceException("ERROR: Internal Server Error occurred whilst attempting to clear application: " + e, 500);
         }
         return new ClearApplicationResult();
     }

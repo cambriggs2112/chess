@@ -21,17 +21,17 @@ public class RegisterService {
     public RegisterResult register(RegisterRequest request) throws ServiceException {
         String authToken = null;
         if (request.username() == null || request.username().isEmpty()) {
-            throw new ServiceException("Bad Request: Username is required to register.", 400);
+            throw new ServiceException("ERROR: Bad Request: Username is required to register.", 400);
         }
         if (request.password() == null || request.password().isEmpty()) {
-            throw new ServiceException("Bad Request: Password is required to register.", 400);
+            throw new ServiceException("ERROR: Bad Request: Password is required to register.", 400);
         }
         if (request.email() == null || request.email().isEmpty()) {
-            throw new ServiceException("Bad Request: Email is required to register.", 400);
+            throw new ServiceException("ERROR: Bad Request: Email is required to register.", 400);
         }
         try {
             if (user.getUser(request.username()) != null) {
-                throw new ServiceException("Forbidden: Unable to register since provided username is already taken.", 403);
+                throw new ServiceException("ERROR: Forbidden: Unable to register since provided username is already taken.", 403);
             }
             UserData newUser = new UserData(request.username(), request.password(), request.email());
             user.createUser(newUser);
@@ -41,7 +41,7 @@ public class RegisterService {
             AuthData newAuth = new AuthData(authToken, request.username());
             auth.createAuth(newAuth);
         } catch (DataAccessException e) {
-            throw new ServiceException("Internal Server Error occurred whilst attempting to register: " + e, 500);
+            throw new ServiceException("ERROR: Internal Server Error occurred whilst attempting to register: " + e, 500);
         }
         return new RegisterResult(request.username(), authToken);
     }
