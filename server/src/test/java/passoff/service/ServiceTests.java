@@ -34,7 +34,7 @@ public class ServiceTests {
     }
 
     // Helper method
-    public void checkEmptyDatabase() {
+    private void checkEmptyDatabase() {
         try {
             Assertions.assertNotNull(auths.listAuths(),
                     "Auth list should not be null.");

@@ -342,6 +342,22 @@ public class ChessGame {
     }
 
     /**
+     * Helper method to determine if a king can be captured from a position
+     */
+    private boolean posCanCaptureKing(int row, int col, TeamColor teamColor, ChessPosition kingPos) {
+        ChessPosition pos = new ChessPosition(row, col);
+        ChessPiece piece = board.getPiece(pos);
+        if (piece != null && piece.getTeamColor() != teamColor) {
+            for (ChessMove move : piece.pieceMoves(board, pos)) {
+                if (move.getEndPosition().equals(kingPos)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
      * Determines if the given team is in check
      *
      * @param teamColor which team to check for check
@@ -363,14 +379,24 @@ public class ChessGame {
         }
         for (int row = 1; row <= 8; row++) {
             for (int col = 1; col <= 8; col++) {
-                ChessPosition pos = new ChessPosition(row, col);
-                ChessPiece piece = board.getPiece(pos);
-                if (piece != null && piece.getTeamColor() != teamColor) {
-                    for (ChessMove move : piece.pieceMoves(board, pos)) {
-                        if (move.getEndPosition().equals(kingPos)) {
-                            return true;
-                        }
-                    }
+                if (posCanCaptureKing(row, col, teamColor, kingPos)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Helper method to determine if a team can leave check from a position
+     */
+    private boolean posCanLeaveCheck(int row, int col, TeamColor teamColor) {
+        ChessPosition pos = new ChessPosition(row, col);
+        ChessPiece startPiece = board.getPiece(pos);
+        if (startPiece != null && startPiece.getTeamColor() == teamColor) {
+            for (ChessMove move : startPiece.pieceMoves(board, pos)) {
+                if (testForNoCheck(move)) {
+                    return true;
                 }
             }
         }
@@ -389,14 +415,8 @@ public class ChessGame {
         }
         for (int row = 1; row <= 8; row++) {
             for (int col = 1; col <= 8; col++) {
-                ChessPosition pos = new ChessPosition(row, col);
-                ChessPiece startPiece = board.getPiece(pos);
-                if (startPiece != null && startPiece.getTeamColor() == teamColor) {
-                    for (ChessMove move : startPiece.pieceMoves(board, pos)) {
-                        if (testForNoCheck(move)) {
-                            return false;
-                        }
-                    }
+                if (posCanLeaveCheck(row, col, teamColor)) {
+                    return false;
                 }
             }
         }

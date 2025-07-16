@@ -282,6 +282,22 @@ public class ChessPiece {
     }
 
     /**
+     * Helper method that adds moves to a PAWN moves list
+     */
+    private void addPawnMoves(ArrayList<ChessMove> list, ChessBoard board, ChessPosition myPosition, ChessPosition newPosition, int row, int rowCompare, int destCompare) {
+        if (moveHereCheck(board, newPosition) == destCompare) {
+            if (row == rowCompare) { // Promotion
+                list.add(new ChessMove(myPosition, newPosition, PieceType.QUEEN));
+                list.add(new ChessMove(myPosition, newPosition, PieceType.BISHOP));
+                list.add(new ChessMove(myPosition, newPosition, PieceType.KNIGHT));
+                list.add(new ChessMove(myPosition, newPosition, PieceType.ROOK));
+            } else {
+                list.add(new ChessMove(myPosition, newPosition, null));
+            }
+        }
+    }
+
+    /**
      * Helper method that calculates all the positions a PAWN can move to
      */
     private ArrayList<ChessMove> pawnMoves(ChessBoard board, ChessPosition myPosition) {
@@ -292,83 +308,33 @@ public class ChessPiece {
         if (pieceColor == ChessGame.TeamColor.WHITE) { // White moves up
             // Basic forward motion
             newPosition = new ChessPosition(row + 1, col);
+            addPawnMoves(result, board, myPosition, newPosition, row, 7, 2); // Space MUST be empty
             if (moveHereCheck(board, newPosition) == 2) { // Space MUST be empty
-                if (row == 7) { // Promotion
-                    result.add(new ChessMove(myPosition, newPosition, PieceType.QUEEN));
-                    result.add(new ChessMove(myPosition, newPosition, PieceType.BISHOP));
-                    result.add(new ChessMove(myPosition, newPosition, PieceType.KNIGHT));
-                    result.add(new ChessMove(myPosition, newPosition, PieceType.ROOK));
-                } else {
+                newPosition = new ChessPosition(row + 2, col);
+                if (row == 2 && moveHereCheck(board, newPosition) == 2) { // Space MUST be empty
                     result.add(new ChessMove(myPosition, newPosition, null));
-                    newPosition = new ChessPosition(row + 2, col);
-                    if (row == 2 && moveHereCheck(board, newPosition) == 2) { // Space MUST be empty
-                        result.add(new ChessMove(myPosition, newPosition, null));
-                    }
                 }
             }
             // Diagonal enemy capture
             newPosition = new ChessPosition(row + 1, col - 1);
-            if (moveHereCheck(board, newPosition) == 1) { // Space MUST have enemy
-                if (row == 7) { // Promotion
-                    result.add(new ChessMove(myPosition, newPosition, PieceType.QUEEN));
-                    result.add(new ChessMove(myPosition, newPosition, PieceType.BISHOP));
-                    result.add(new ChessMove(myPosition, newPosition, PieceType.KNIGHT));
-                    result.add(new ChessMove(myPosition, newPosition, PieceType.ROOK));
-                } else {
-                    result.add(new ChessMove(myPosition, newPosition, null));
-                }
-            }
+            addPawnMoves(result, board, myPosition, newPosition, row, 7, 1); // Space MUST have enemy
             newPosition = new ChessPosition(row + 1, col + 1);
-            if (moveHereCheck(board, newPosition) == 1) { // Space MUST have enemy
-                if (row == 7) { // Promotion
-                    result.add(new ChessMove(myPosition, newPosition, PieceType.QUEEN));
-                    result.add(new ChessMove(myPosition, newPosition, PieceType.BISHOP));
-                    result.add(new ChessMove(myPosition, newPosition, PieceType.KNIGHT));
-                    result.add(new ChessMove(myPosition, newPosition, PieceType.ROOK));
-                } else {
-                    result.add(new ChessMove(myPosition, newPosition, null));
-                }
-            }
+            addPawnMoves(result, board, myPosition, newPosition, row, 7, 1); // Space MUST have enemy
         } else { // Black moves down
             // Basic forward motion
             newPosition = new ChessPosition(row - 1, col);
+            addPawnMoves(result, board, myPosition, newPosition, row, 2, 2); // Space MUST be empty
             if (moveHereCheck(board, newPosition) == 2) { // Space MUST be empty
-                if (row == 2) { // Promotion
-                    result.add(new ChessMove(myPosition, newPosition, PieceType.QUEEN));
-                    result.add(new ChessMove(myPosition, newPosition, PieceType.BISHOP));
-                    result.add(new ChessMove(myPosition, newPosition, PieceType.KNIGHT));
-                    result.add(new ChessMove(myPosition, newPosition, PieceType.ROOK));
-                } else {
+                newPosition = new ChessPosition(row - 2, col);
+                if (row == 7 && moveHereCheck(board, newPosition) == 2) { // Space MUST be empty
                     result.add(new ChessMove(myPosition, newPosition, null));
-                    newPosition = new ChessPosition(row - 2, col);
-                    if (row == 7 && moveHereCheck(board, newPosition) == 2) { // Space MUST be empty
-                        result.add(new ChessMove(myPosition, newPosition, null));
-                    }
                 }
             }
             // Diagonal enemy capture
             newPosition = new ChessPosition(row - 1, col - 1);
-            if (moveHereCheck(board, newPosition) == 1) { // Space MUST have enemy
-                if (row == 2) { // Promotion
-                    result.add(new ChessMove(myPosition, newPosition, PieceType.QUEEN));
-                    result.add(new ChessMove(myPosition, newPosition, PieceType.BISHOP));
-                    result.add(new ChessMove(myPosition, newPosition, PieceType.KNIGHT));
-                    result.add(new ChessMove(myPosition, newPosition, PieceType.ROOK));
-                } else {
-                    result.add(new ChessMove(myPosition, newPosition, null));
-                }
-            }
+            addPawnMoves(result, board, myPosition, newPosition, row, 2, 1); // Space MUST have enemy
             newPosition = new ChessPosition(row - 1, col + 1);
-            if (moveHereCheck(board, newPosition) == 1) { // Space MUST have enemy
-                if (row == 2) { // Promotion
-                    result.add(new ChessMove(myPosition, newPosition, PieceType.QUEEN));
-                    result.add(new ChessMove(myPosition, newPosition, PieceType.BISHOP));
-                    result.add(new ChessMove(myPosition, newPosition, PieceType.KNIGHT));
-                    result.add(new ChessMove(myPosition, newPosition, PieceType.ROOK));
-                } else {
-                    result.add(new ChessMove(myPosition, newPosition, null));
-                }
-            }
+            addPawnMoves(result, board, myPosition, newPosition, row, 2, 1); // Space MUST have enemy
         }
         return result;
     }
