@@ -53,35 +53,6 @@ public class MemoryUserDAO implements UserDAO {
     }
 
     /**
-     * Replaces an object of user data in the database by username
-     *
-     * @param newUser the new user data object to replace the existing one
-     * @throws DataAccessException if username is null or does not exist
-     */
-    public void updateUser(UserData newUser) throws DataAccessException {
-        UserData u = getUser(newUser.username());
-        if (u == null) {
-            throw new DataAccessException("Unable to update user data: Username not found.");
-        }
-        int index = userDatabase.indexOf(u);
-        userDatabase.set(index, newUser);
-    }
-
-    /**
-     * Deletes an object of user data by username
-     *
-     * @param username the username of the object to delete
-     * @throws DataAccessException if username is null or does not exist
-     */
-    public void deleteUser(String username) throws DataAccessException {
-        UserData u = getUser(username);
-        if (u == null) {
-            throw new DataAccessException("Unable to delete user data: Username not found.");
-        }
-        userDatabase.remove(u);
-    }
-
-    /**
      * Deletes all user data in the database
      */
     public void clear() throws DataAccessException {

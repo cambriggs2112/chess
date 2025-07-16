@@ -24,16 +24,16 @@ public class ClearApplicationHandler {
      * @param response the HTTP response object
      */
     public Object handleRequest(Request request, Response response) {
-        Gson serializer = new Gson();
-        ClearApplicationService.ClearApplicationRequest req = serializer.fromJson(request.body(), ClearApplicationService.ClearApplicationRequest.class);
+        Gson gson = new Gson();
+        ClearApplicationService.ClearApplicationRequest req = gson.fromJson(request.body(), ClearApplicationService.ClearApplicationRequest.class);
         try {
             ClearApplicationService.ClearApplicationResult res = clearApplicationService.clearApplication(req);
             response.status(200);
-            return serializer.toJson(res);
+            return gson.toJson(res);
         } catch (ServiceException e) {
             ErrorResult err = new ErrorResult(e.toString());
             response.status(e.getHTTPCode());
-            return serializer.toJson(err);
+            return gson.toJson(err);
         }
     }
 }

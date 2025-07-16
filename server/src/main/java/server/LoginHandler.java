@@ -23,16 +23,16 @@ public class LoginHandler {
      * @param response the HTTP response object
      */
     public Object handleRequest(Request request, Response response) {
-        Gson serializer = new Gson();
-        LoginService.LoginRequest req = serializer.fromJson(request.body(), LoginService.LoginRequest.class);
+        Gson gson = new Gson();
+        LoginService.LoginRequest req = gson.fromJson(request.body(), LoginService.LoginRequest.class);
         try {
             LoginService.LoginResult res = loginService.login(req);
             response.status(200);
-            return serializer.toJson(res);
+            return gson.toJson(res);
         } catch (ServiceException e) {
             ErrorResult err = new ErrorResult(e.toString());
             response.status(e.getHTTPCode());
-            return serializer.toJson(err);
+            return gson.toJson(err);
         }
     }
 }

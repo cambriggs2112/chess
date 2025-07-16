@@ -68,20 +68,6 @@ public class MemoryGameDAO implements GameDAO {
     }
 
     /**
-     * Deletes an object of game data by game ID
-     *
-     * @param gameID the game ID of the object to delete
-     * @throws DataAccessException if game ID is null or does not exist
-     */
-    public void deleteGame(Integer gameID) throws DataAccessException {
-        GameData g = getGame(gameID);
-        if (g == null) {
-            throw new DataAccessException("Unable to delete game data: Game ID not found.");
-        }
-        gameDatabase.remove(g);
-    }
-
-    /**
      * Deletes all game data in the database
      */
     public void clear() throws DataAccessException {

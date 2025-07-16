@@ -23,18 +23,18 @@ public class JoinGameHandler {
      * @param response the HTTP response object
      */
     public Object handleRequest(Request request, Response response) {
-        Gson serializer = new Gson();
-        JoinGameService.JoinGameRequest req = serializer.fromJson(request.body(), JoinGameService.JoinGameRequest.class);
+        Gson gson = new Gson();
+        JoinGameService.JoinGameRequest req = gson.fromJson(request.body(), JoinGameService.JoinGameRequest.class);
         String authToken = request.headers("authorization");
         req = new JoinGameService.JoinGameRequest(authToken, req.playerColor(), req.gameID());
         try {
             JoinGameService.JoinGameResult res = joinGameService.joinGame(req);
             response.status(200);
-            return serializer.toJson(res);
+            return gson.toJson(res);
         } catch (ServiceException e) {
             ErrorResult err = new ErrorResult(e.toString());
             response.status(e.getHTTPCode());
-            return serializer.toJson(err);
+            return gson.toJson(err);
         }
     }
 }

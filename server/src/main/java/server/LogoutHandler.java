@@ -23,17 +23,17 @@ public class LogoutHandler {
      * @param response the HTTP response object
      */
     public Object handleRequest(Request request, Response response) {
-        Gson serializer = new Gson();
+        Gson gson = new Gson();
         String authToken = request.headers("authorization");
         LogoutService.LogoutRequest req = new LogoutService.LogoutRequest(authToken);
         try {
             LogoutService.LogoutResult res = logoutService.logout(req);
             response.status(200);
-            return serializer.toJson(res);
+            return gson.toJson(res);
         } catch (ServiceException e) {
             ErrorResult err = new ErrorResult(e.toString());
             response.status(e.getHTTPCode());
-            return serializer.toJson(err);
+            return gson.toJson(err);
         }
     }
 }

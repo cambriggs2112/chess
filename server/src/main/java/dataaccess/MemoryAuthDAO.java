@@ -54,21 +54,6 @@ public class MemoryAuthDAO implements AuthDAO {
     }
 
     /**
-     * Replaces an object of authorization data in the database by authorization token
-     *
-     * @param newAuth the new authorization data object to replace the existing one
-     * @throws DataAccessException if authorization token is null or does not exist
-     */
-    public void updateAuth(AuthData newAuth) throws DataAccessException {
-        AuthData a = getAuth(newAuth.authToken());
-        if (a == null) {
-            throw new DataAccessException("Unable to update authorization data: Authorization token not found.");
-        }
-        int index = authDatabase.indexOf(a);
-        authDatabase.set(index, newAuth);
-    }
-
-    /**
      * Deletes an object of authorization data by authorization token
      *
      * @param authToken the authorization token of the object to delete

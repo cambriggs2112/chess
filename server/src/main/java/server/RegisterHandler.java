@@ -23,16 +23,16 @@ public class RegisterHandler {
      * @param response the HTTP response object
      */
     public Object handleRequest(Request request, Response response) {
-        Gson serializer = new Gson();
-        RegisterService.RegisterRequest req = serializer.fromJson(request.body(), RegisterService.RegisterRequest.class);
+        Gson gson = new Gson();
+        RegisterService.RegisterRequest req = gson.fromJson(request.body(), RegisterService.RegisterRequest.class);
         try {
             RegisterService.RegisterResult res = registerService.register(req);
             response.status(200);
-            return serializer.toJson(res);
+            return gson.toJson(res);
         } catch (ServiceException e) {
             ErrorResult err = new ErrorResult(e.toString());
             response.status(e.getHTTPCode());
-            return serializer.toJson(err);
+            return gson.toJson(err);
         }
     }
 }

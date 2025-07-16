@@ -33,24 +33,35 @@ public class ServiceTests {
         }
     }
 
+    // Helper method
+    public void checkEmptyDatabase() {
+        try {
+            Assertions.assertNotNull(auths.listAuths(),
+                    "Auth list should not be null.");
+            Assertions.assertNotNull(games.listGames(),
+                    "Game list should not be null.");
+            Assertions.assertNotNull(users.listUsers(),
+                    "User list should not be null.");
+            Assertions.assertEquals(0, auths.listAuths().size(),
+                    "Auth list should be empty.");
+            Assertions.assertEquals(0, games.listGames().size(),
+                    "Game list should be empty.");
+            Assertions.assertEquals(0, users.listUsers().size(),
+                    "User list should be empty.");
+        } catch (DataAccessException e) {
+            Assertions.fail("Data Access methods should not throw exceptions. " + e);
+        }
+    }
+
     @Test
     public void clearApplicationOnce() {
         ClearApplicationService service = new ClearApplicationService(auths, games, users);
         ClearApplicationService.ClearApplicationRequest req = new ClearApplicationService.ClearApplicationRequest();
         try {
             service.clearApplication(req);
+            checkEmptyDatabase();
         } catch (ServiceException e) {
             Assertions.fail("Clear Application should not throw exceptions. " + e);
-        }
-        try {
-            Assertions.assertNotNull(auths.listAuths(), "Auth list should not be null.");
-            Assertions.assertNotNull(games.listGames(), "Game list should not be null.");
-            Assertions.assertNotNull(users.listUsers(), "User list should not be null.");
-            Assertions.assertEquals(0, auths.listAuths().size(), "Auth list should be empty.");
-            Assertions.assertEquals(0, games.listGames().size(), "Game list should be empty.");
-            Assertions.assertEquals(0, users.listUsers().size(), "User list should be empty.");
-        } catch (DataAccessException e) {
-            Assertions.fail("Data Access methods should not throw exceptions. " + e);
         }
     }
 
@@ -61,25 +72,17 @@ public class ServiceTests {
         try {
             service.clearApplication(req);
             service.clearApplication(req);
+            checkEmptyDatabase();
         } catch (ServiceException e) {
             Assertions.fail("Clear Application should not throw exceptions. " + e);
-        }
-        try {
-            Assertions.assertNotNull(auths.listAuths(), "Auth list should not be null.");
-            Assertions.assertNotNull(games.listGames(), "Game list should not be null.");
-            Assertions.assertNotNull(users.listUsers(), "User list should not be null.");
-            Assertions.assertEquals(0, auths.listAuths().size(), "Auth list should be empty.");
-            Assertions.assertEquals(0, games.listGames().size(), "Game list should be empty.");
-            Assertions.assertEquals(0, users.listUsers().size(), "User list should be empty.");
-        } catch (DataAccessException e) {
-            Assertions.fail("Data Access methods should not throw exceptions. " + e);
         }
     }
 
     @Test
     public void createGameNormally() {
         CreateGameService service = new CreateGameService(auths, games, users);
-        CreateGameService.CreateGameRequest req = new CreateGameService.CreateGameRequest(existingAuth.authToken(), "chess");
+        CreateGameService.CreateGameRequest req = new CreateGameService.CreateGameRequest(
+                existingAuth.authToken(), "chess");
         CreateGameService.CreateGameResult res = null;
         try {
             res = service.createGame(req);
@@ -87,10 +90,14 @@ public class ServiceTests {
             Assertions.fail("Create Game should not throw exceptions. " + e);
         }
         try {
-            Assertions.assertNotNull(games.listGames(), "Game list should not be null.");
-            Assertions.assertEquals(2, games.listGames().size(), "Game list should have a second game.");
-            Assertions.assertNotNull(res, "The result object should not be null.");
-            Assertions.assertNotNull(res.gameID(), "Create Game should return a game ID.");
+            Assertions.assertNotNull(games.listGames(),
+                    "Game list should not be null.");
+            Assertions.assertEquals(2, games.listGames().size(),
+                    "Game list should have a second game.");
+            Assertions.assertNotNull(res,
+                    "The result object should not be null.");
+            Assertions.assertNotNull(res.gameID(),
+                    "Create Game should return a game ID.");
         } catch (DataAccessException e) {
             Assertions.fail("Data Access methods should not throw exceptions. " + e);
         }
@@ -99,7 +106,8 @@ public class ServiceTests {
     @Test
     public void createGameWithoutAuth() {
         CreateGameService service = new CreateGameService(auths, games, users);
-        CreateGameService.CreateGameRequest req = new CreateGameService.CreateGameRequest("incorrect-auth-token", "chess");
+        CreateGameService.CreateGameRequest req = new CreateGameService.CreateGameRequest(
+                "incorrect-auth-token", "chess");
         try {
             service.createGame(req);
             Assertions.fail("Create Game should have thrown an exception.");
@@ -107,8 +115,10 @@ public class ServiceTests {
             Assertions.assertEquals(401, e.getHTTPCode(), "Create Game did not return the correct HTTP code.");
         }
         try {
-            Assertions.assertNotNull(games.listGames(), "Game list should not be null.");
-            Assertions.assertEquals(1, games.listGames().size(), "Game list should have one game.");
+            Assertions.assertNotNull(games.listGames(),
+                    "Game list should not be null.");
+            Assertions.assertEquals(1, games.listGames().size(),
+                    "Game list should have one game.");
         } catch (DataAccessException e) {
             Assertions.fail("Data Access methods should not throw exceptions. " + e);
         }
@@ -117,18 +127,24 @@ public class ServiceTests {
     @Test
     public void joinGameNormally() { // Note: WHITE is taken.
         JoinGameService service = new JoinGameService(auths, games, users);
-        JoinGameService.JoinGameRequest req = new JoinGameService.JoinGameRequest(existingAuth.authToken(), ChessGame.TeamColor.BLACK, existingGame.gameID());
+        JoinGameService.JoinGameRequest req = new JoinGameService.JoinGameRequest(
+                existingAuth.authToken(), ChessGame.TeamColor.BLACK, existingGame.gameID());
         try {
             service.joinGame(req);
         } catch (ServiceException e) {
             Assertions.fail("Join Game should not throw exceptions. " + e);
         }
         try {
-            Assertions.assertNotNull(games.getGame(existingGame.gameID()), "Modified game should exist.");
-            Assertions.assertNotNull(games.getGame(existingGame.gameID()).blackUsername(), "Modified game should have someone playing as BLACK.");
-            Assertions.assertNotNull(games.getGame(existingGame.gameID()).whiteUsername(), "Modified game should still have someone playing as WHITE.");
-            Assertions.assertEquals(existingUser.username(), games.getGame(existingGame.gameID()).blackUsername(), "Modified game does not have the correct BLACK username.");
-            Assertions.assertEquals(existingUser.username(), games.getGame(existingGame.gameID()).whiteUsername(), "Modified game does not have the correct WHITE username.");
+            Assertions.assertNotNull(games.getGame(existingGame.gameID()),
+                    "Modified game should exist.");
+            Assertions.assertNotNull(games.getGame(existingGame.gameID()).blackUsername(),
+                    "Modified game should have someone playing as BLACK.");
+            Assertions.assertNotNull(games.getGame(existingGame.gameID()).whiteUsername(),
+                    "Modified game should still have someone playing as WHITE.");
+            Assertions.assertEquals(existingUser.username(), games.getGame(existingGame.gameID()).blackUsername(),
+                    "Modified game does not have the correct BLACK username.");
+            Assertions.assertEquals(existingUser.username(), games.getGame(existingGame.gameID()).whiteUsername(),
+                    "Modified game does not have the correct WHITE username.");
         } catch (DataAccessException e) {
             Assertions.fail("Data Access methods should not throw exceptions. " + e);
         }
@@ -137,18 +153,24 @@ public class ServiceTests {
     @Test
     public void joinGameAsWhite() { // Note: WHITE is taken.
         JoinGameService service = new JoinGameService(auths, games, users);
-        JoinGameService.JoinGameRequest req = new JoinGameService.JoinGameRequest(existingAuth.authToken(), ChessGame.TeamColor.WHITE, existingGame.gameID());
+        JoinGameService.JoinGameRequest req = new JoinGameService.JoinGameRequest(
+                existingAuth.authToken(), ChessGame.TeamColor.WHITE, existingGame.gameID());
         try {
             service.joinGame(req);
             Assertions.fail("Join Game should have thrown an exception.");
         } catch (ServiceException e) {
-            Assertions.assertEquals(403, e.getHTTPCode(), "Join Game did not return the correct HTTP code.");
+            Assertions.assertEquals(403, e.getHTTPCode(),
+                    "Join Game did not return the correct HTTP code.");
         }
         try {
-            Assertions.assertNotNull(games.getGame(existingGame.gameID()), "Modified game should exist.");
-            Assertions.assertNull(games.getGame(existingGame.gameID()).blackUsername(), "Modified game should not have anyone playing as BLACK.");
-            Assertions.assertNotNull(games.getGame(existingGame.gameID()).whiteUsername(), "Modified game should still have someone playing as WHITE.");
-            Assertions.assertEquals(existingUser.username(), games.getGame(existingGame.gameID()).whiteUsername(), "Modified game does not have the correct WHITE username.");
+            Assertions.assertNotNull(games.getGame(existingGame.gameID()),
+                    "Modified game should exist.");
+            Assertions.assertNull(games.getGame(existingGame.gameID()).blackUsername(),
+                    "Modified game should not have anyone playing as BLACK.");
+            Assertions.assertNotNull(games.getGame(existingGame.gameID()).whiteUsername(),
+                    "Modified game should still have someone playing as WHITE.");
+            Assertions.assertEquals(existingUser.username(), games.getGame(existingGame.gameID()).whiteUsername(),
+                    "Modified game does not have the correct WHITE username.");
         } catch (DataAccessException e) {
             Assertions.fail("Data Access methods should not throw exceptions. " + e);
         }
@@ -157,28 +179,38 @@ public class ServiceTests {
     @Test
     public void listGamesNormally() {
         ListGamesService service = new ListGamesService(auths, games, users);
-        ListGamesService.ListGamesRequest req = new ListGamesService.ListGamesRequest(existingAuth.authToken());
+        ListGamesService.ListGamesRequest req = new ListGamesService.ListGamesRequest(
+                existingAuth.authToken());
         ListGamesService.ListGamesResult res = null;
         try {
             res = service.listGames(req);
         } catch (ServiceException e) {
             Assertions.fail("List Games should not throw exceptions. " + e);
         }
-        Assertions.assertNotNull(res, "Result object should not be null.");
+        Assertions.assertNotNull(res,
+                "Result object should not be null.");
         ArrayList<ListGamesService.ListGamesResultElement> gamesList = res.games();
-        Assertions.assertNotNull(gamesList, "Result list should not be null.");
-        Assertions.assertEquals(1, gamesList.size(), "There should be one game in the list.");
-        Assertions.assertNotNull(gamesList.get(0), "Game in list should not be null.");
-        Assertions.assertEquals(existingGame.gameID(), gamesList.get(0).gameID(), "Game in list had incorrect game ID.");
-        Assertions.assertEquals(existingGame.whiteUsername(), gamesList.get(0).whiteUsername(), "Game in list had incorrect white username.");
-        Assertions.assertNull(gamesList.get(0).blackUsername(), "Game in list had incorrect black username.");
-        Assertions.assertEquals(existingGame.gameName(), gamesList.get(0).gameName(), "Game in list had incorrect game name.");
+        Assertions.assertNotNull(gamesList,
+                "Result list should not be null.");
+        Assertions.assertEquals(1, gamesList.size(),
+                "There should be one game in the list.");
+        Assertions.assertNotNull(gamesList.get(0),
+                "Game in list should not be null.");
+        Assertions.assertEquals(existingGame.gameID(), gamesList.get(0).gameID(),
+                "Game in list had incorrect game ID.");
+        Assertions.assertEquals(existingGame.whiteUsername(), gamesList.get(0).whiteUsername(),
+                "Game in list had incorrect white username.");
+        Assertions.assertNull(gamesList.get(0).blackUsername(),
+                "Game in list had incorrect black username.");
+        Assertions.assertEquals(existingGame.gameName(), gamesList.get(0).gameName(),
+                "Game in list had incorrect game name.");
     }
 
     @Test
     public void listGamesWithoutAuth() {
         ListGamesService service = new ListGamesService(auths, games, users);
-        ListGamesService.ListGamesRequest req = new ListGamesService.ListGamesRequest("incorrect-auth-token");
+        ListGamesService.ListGamesRequest req = new ListGamesService.ListGamesRequest(
+                "incorrect-auth-token");
         try {
             service.listGames(req);
             Assertions.fail("List Games should have thrown an exception.");
@@ -190,7 +222,8 @@ public class ServiceTests {
     @Test
     public void loginNormally() {
         LoginService service = new LoginService(auths, games, users);
-        LoginService.LoginRequest req = new LoginService.LoginRequest(existingUser.username(), existingUser.password());
+        LoginService.LoginRequest req = new LoginService.LoginRequest(
+                existingUser.username(), existingUser.password());
         LoginService.LoginResult res = null;
         try {
             res = service.login(req);
@@ -198,12 +231,18 @@ public class ServiceTests {
             Assertions.fail("Login should not throw exceptions. " + e);
         }
         try {
-            Assertions.assertNotNull(res, "Result object should not be null.");
-            Assertions.assertNotNull(res.authToken(), "Result object had no auth token.");
-            Assertions.assertNotNull(res.username(), "Result object had no username.");
-            Assertions.assertEquals(existingUser.username(), res.username(), "Result object did not contain the correct username.");
-            Assertions.assertNotNull(auths.listAuths(), "Auths list should not be null.");
-            Assertions.assertEquals(2, auths.listAuths().size(), "Auths list should contain two auths.");
+            Assertions.assertNotNull(res,
+                    "Result object should not be null.");
+            Assertions.assertNotNull(res.authToken(),
+                    "Result object had no auth token.");
+            Assertions.assertNotNull(res.username(),
+                    "Result object had no username.");
+            Assertions.assertEquals(existingUser.username(), res.username(),
+                    "Result object did not contain the correct username.");
+            Assertions.assertNotNull(auths.listAuths(),
+                    "Auths list should not be null.");
+            Assertions.assertEquals(2, auths.listAuths().size(),
+                    "Auths list should contain two auths.");
         } catch (DataAccessException e) {
             Assertions.fail("Data Access methods should not throw exceptions. " + e);
         }
@@ -212,7 +251,8 @@ public class ServiceTests {
     @Test
     public void loginIncorrectPassword() {
         LoginService service = new LoginService(auths, games, users);
-        LoginService.LoginRequest req = new LoginService.LoginRequest(existingUser.username(), "incorrect-password");
+        LoginService.LoginRequest req = new LoginService.LoginRequest(
+                existingUser.username(), "incorrect-password");
         try {
             service.login(req);
             Assertions.fail("Login should have thrown an exception.");
@@ -220,8 +260,10 @@ public class ServiceTests {
             Assertions.assertEquals(401, e.getHTTPCode(), "Login did not return the correct HTTP code.");
         }
         try {
-            Assertions.assertNotNull(auths.listAuths(), "Auth list should not be null.");
-            Assertions.assertEquals(1, auths.listAuths().size(), "Auth list should have one auth.");
+            Assertions.assertNotNull(auths.listAuths(),
+                    "Auth list should not be null.");
+            Assertions.assertEquals(1, auths.listAuths().size(),
+                    "Auth list should have one auth.");
         } catch (DataAccessException e) {
             Assertions.fail("Data Access methods should not throw exceptions. " + e);
         }
@@ -230,15 +272,18 @@ public class ServiceTests {
     @Test
     public void logoutNormally() {
         LogoutService service = new LogoutService(auths, games, users);
-        LogoutService.LogoutRequest req = new LogoutService.LogoutRequest(existingAuth.authToken());
+        LogoutService.LogoutRequest req = new LogoutService.LogoutRequest(
+                existingAuth.authToken());
         try {
             service.logout(req);
         } catch (ServiceException e) {
             Assertions.fail("Logout should not throw exceptions. " + e);
         }
         try {
-            Assertions.assertNotNull(auths.listAuths(), "Auth list should not be null.");
-            Assertions.assertEquals(0, auths.listAuths().size(), "Auth list should have no auths.");
+            Assertions.assertNotNull(auths.listAuths(),
+                    "Auth list should not be null.");
+            Assertions.assertEquals(0, auths.listAuths().size(),
+                    "Auth list should have no auths.");
         } catch (DataAccessException e) {
             Assertions.fail("Data Access methods should not throw exceptions. " + e);
         }
@@ -247,7 +292,8 @@ public class ServiceTests {
     @Test
     public void logoutWithoutAuth() {
         LogoutService service = new LogoutService(auths, games, users);
-        LogoutService.LogoutRequest req = new LogoutService.LogoutRequest("incorrect-auth-token");
+        LogoutService.LogoutRequest req = new LogoutService.LogoutRequest(
+                "incorrect-auth-token");
         try {
             service.logout(req);
             Assertions.fail("Logout should have thrown an exception.");
@@ -255,8 +301,10 @@ public class ServiceTests {
             Assertions.assertEquals(401, e.getHTTPCode(), "Logout did not return the correct HTTP code.");
         }
         try {
-            Assertions.assertNotNull(auths.listAuths(), "Auth list should not be null.");
-            Assertions.assertEquals(1, auths.listAuths().size(), "Auth list should have one auth.");
+            Assertions.assertNotNull(auths.listAuths(),
+                    "Auth list should not be null.");
+            Assertions.assertEquals(1, auths.listAuths().size(),
+                    "Auth list should have one auth.");
         } catch (DataAccessException e) {
             Assertions.fail("Data Access methods should not throw exceptions. " + e);
         }
@@ -265,7 +313,8 @@ public class ServiceTests {
     @Test
     public void registerNormally() {
         RegisterService service = new RegisterService(auths, games, users);
-        RegisterService.RegisterRequest req = new RegisterService.RegisterRequest("user2", "pass2", "email2@outlook.com()");
+        RegisterService.RegisterRequest req = new RegisterService.RegisterRequest(
+                "user2", "pass2", "email2@outlook.com()");
         RegisterService.RegisterResult res = null;
         try {
             res = service.register(req);
@@ -273,14 +322,22 @@ public class ServiceTests {
             Assertions.fail("Register should not throw exceptions. " + e);
         }
         try {
-            Assertions.assertNotNull(res, "Result object should not be null.");
-            Assertions.assertNotNull(res.authToken(), "Result object had no auth token.");
-            Assertions.assertNotNull(res.username(), "Result object had no username.");
-            Assertions.assertEquals("user2", res.username(), "Result object did not contain the correct username.");
-            Assertions.assertNotNull(users.listUsers(), "User list should not be null.");
-            Assertions.assertEquals(2, users.listUsers().size(), "User list should have two users.");
-            Assertions.assertNotNull(auths.listAuths(), "Auths list should not be null.");
-            Assertions.assertEquals(2, auths.listAuths().size(), "Auths list should contain two auths.");
+            Assertions.assertNotNull(res,
+                    "Result object should not be null.");
+            Assertions.assertNotNull(res.authToken(),
+                    "Result object had no auth token.");
+            Assertions.assertNotNull(res.username(),
+                    "Result object had no username.");
+            Assertions.assertEquals("user2", res.username(),
+                    "Result object did not contain the correct username.");
+            Assertions.assertNotNull(users.listUsers(),
+                    "User list should not be null.");
+            Assertions.assertEquals(2, users.listUsers().size(),
+                    "User list should have two users.");
+            Assertions.assertNotNull(auths.listAuths(),
+                    "Auths list should not be null.");
+            Assertions.assertEquals(2, auths.listAuths().size(),
+                    "Auths list should contain two auths.");
         } catch (DataAccessException e) {
             Assertions.fail("Data Access methods should not throw exceptions. " + e);
         }
@@ -289,7 +346,8 @@ public class ServiceTests {
     @Test
     public void registerTakenUsername() {
         RegisterService service = new RegisterService(auths, games, users);
-        RegisterService.RegisterRequest req = new RegisterService.RegisterRequest(existingUser.username(), "pass2", "email2@outlook.com()");
+        RegisterService.RegisterRequest req = new RegisterService.RegisterRequest(
+                existingUser.username(), "pass2", "email2@outlook.com()");
         try {
             service.register(req);
             Assertions.fail("Register should have thrown an exception.");
@@ -297,10 +355,14 @@ public class ServiceTests {
             Assertions.assertEquals(403, e.getHTTPCode(), "Register did not return the correct HTTP code.");
         }
         try {
-            Assertions.assertNotNull(users.listUsers(), "User list should not be null.");
-            Assertions.assertEquals(1, users.listUsers().size(), "User list should have one user.");
-            Assertions.assertNotNull(auths.listAuths(), "Auths list should not be null.");
-            Assertions.assertEquals(1, auths.listAuths().size(), "Auths list should contain one auth.");
+            Assertions.assertNotNull(users.listUsers(),
+                    "User list should not be null.");
+            Assertions.assertEquals(1, users.listUsers().size(),
+                    "User list should have one user.");
+            Assertions.assertNotNull(auths.listAuths(),
+                    "Auths list should not be null.");
+            Assertions.assertEquals(1, auths.listAuths().size(),
+                    "Auths list should contain one auth.");
         } catch (DataAccessException e) {
             Assertions.fail("Data Access methods should not throw exceptions. " + e);
         }
