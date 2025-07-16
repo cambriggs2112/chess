@@ -284,7 +284,9 @@ public class ChessPiece {
     /**
      * Helper method that adds moves to a PAWN moves list
      */
-    private void addPawnMoves(ArrayList<ChessMove> list, ChessBoard board, ChessPosition myPosition, ChessPosition newPosition, int row, int rowCompare, int destCompare) {
+    private void addPawnMoves(ArrayList<ChessMove> list, ChessBoard board,
+                              ChessPosition myPosition, ChessPosition newPosition,
+                              int row, int rowCompare, int destCompare) {
         if (moveHereCheck(board, newPosition) == destCompare) {
             if (row == rowCompare) { // Promotion
                 list.add(new ChessMove(myPosition, newPosition, PieceType.QUEEN));
