@@ -2,7 +2,6 @@ package server;
 
 import com.google.gson.Gson;
 import service.*;
-import service.RegisterService.*;
 import spark.Request;
 import spark.Response;
 
@@ -20,17 +19,9 @@ public class RegisterHandler {
             RegisterService.RegisterResult res = registerService.register(req);
             response.status(200);
             return serializer.toJson(res);
-        } catch (BadRequestException e) {
+        } catch (ServiceException e) {
             ErrorResult err = new ErrorResult(e.toString());
-            response.status(400);
-            return serializer.toJson(err);
-        } catch (ForbiddenException e) {
-            ErrorResult err = new ErrorResult(e.toString());
-            response.status(403);
-            return serializer.toJson(err);
-        } catch (Exception e) { // other exceptions
-            ErrorResult err = new ErrorResult(e.toString());
-            response.status(500);
+            response.status(e.getHTTPCode());
             return serializer.toJson(err);
         }
     }

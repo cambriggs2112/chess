@@ -19,20 +19,22 @@ public class CreateGameService {
         this.user = user;
     }
 
-    public CreateGameResult createGame(CreateGameRequest request) throws BadRequestException, UnauthorizedException, InternalServerErrorException {
+    public CreateGameResult createGame(CreateGameRequest request) throws ServiceException {
         int gameID = 0;
         if (request.gameName() == null || request.gameName().isEmpty()) {
-            throw new BadRequestException("[400] Bad Request: Game name is required to create game.");
+            throw new ServiceException("Bad Request: Game name is required to create game.", 400);
         }
         try {
             if (request.authToken() == null || auth.getAuth(request.authToken()) == null) {
-                throw new UnauthorizedException("[401] Unauthorized: Unknown authorization token provided whilst attempting to create game.");
+                throw new ServiceException("Unauthorized: Unknown authorization token provided whilst attempting to create game.", 401);
             }
-            gameID = UUID.randomUUID().hashCode(); // Get pseudorandom, likely unique int by hashing UUID
+            while (gameID <= 0 || game.getGame(gameID) != null) { // Used to effectively guarantee gameID is valid and unique
+                gameID = Math.abs(UUID.randomUUID().hashCode()); // Get gameID by hashing UUID and applying absolute value
+            }
             GameData newGame = new GameData(gameID, "", "", request.gameName(), new ChessGame());
             game.createGame(newGame);
         } catch (DataAccessException e) {
-            throw new InternalServerErrorException("[500] Internal Server Error occurred whilst attempting to create game: " + e);
+            throw new ServiceException("Internal Server Error occurred whilst attempting to create game: " + e, 500);
         }
         return new CreateGameResult(gameID);
     }

@@ -2,7 +2,6 @@ package server;
 
 import com.google.gson.Gson;
 import service.*;
-import service.ClearApplicationService.*;
 import spark.Request;
 import spark.Response;
 
@@ -15,14 +14,14 @@ public class ClearApplicationHandler {
 
     public Object handleRequest(Request request, Response response) {
         Gson serializer = new Gson();
-        ClearApplicationRequest req = serializer.fromJson(request.body(), ClearApplicationRequest.class);
+        ClearApplicationService.ClearApplicationRequest req = serializer.fromJson(request.body(), ClearApplicationService.ClearApplicationRequest.class);
         try {
-            ClearApplicationResult res = clearApplicationService.clearApplication(req);
+            ClearApplicationService.ClearApplicationResult res = clearApplicationService.clearApplication(req);
             response.status(200);
             return serializer.toJson(res);
-        } catch (Exception e) {
+        } catch (ServiceException e) {
             ErrorResult err = new ErrorResult(e.toString());
-            response.status(500);
+            response.status(e.getHTTPCode());
             return serializer.toJson(err);
         }
     }

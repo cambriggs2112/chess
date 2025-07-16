@@ -16,13 +16,13 @@ public class ClearApplicationService {
         this.user = user;
     }
 
-    public ClearApplicationResult clearApplication(ClearApplicationRequest request) throws InternalServerErrorException {
+    public ClearApplicationResult clearApplication(ClearApplicationRequest request) throws ServiceException {
         try {
             auth.clear();
             game.clear();
             user.clear();
         } catch (DataAccessException e) {
-            throw new InternalServerErrorException("[500] Internal Server Error occurred whilst attempting to clear application: " + e);
+            throw new ServiceException("Internal Server Error occurred whilst attempting to clear application: " + e, 500);
         }
         return new ClearApplicationResult();
     }

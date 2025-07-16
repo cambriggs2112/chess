@@ -1,7 +1,5 @@
 import chess.*;
 import server.Server;
-import dataaccess.*;
-import service.*;
 
 public class Main {
     public static void main(String[] args) {

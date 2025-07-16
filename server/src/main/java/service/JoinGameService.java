@@ -18,36 +18,36 @@ public class JoinGameService {
         this.user = user;
     }
 
-    public JoinGameResult joinGame(JoinGameRequest request) throws BadRequestException, UnauthorizedException, ForbiddenException, InternalServerErrorException {
+    public JoinGameResult joinGame(JoinGameRequest request) throws ServiceException {
         if (request.authToken() == null) {
-            throw new UnauthorizedException("[401] Unauthorized: Unknown authorization token provided whilst attempting to join game.");
+            throw new ServiceException("Unauthorized: Unknown authorization token provided whilst attempting to join game.", 401);
         }
         if (request.playerColor() == null) {
-            throw new BadRequestException("[400] Bad Request: Team color is required and must be BLACK or WHITE to join game.");
+            throw new ServiceException("Bad Request: Team color is required and must be BLACK or WHITE to join game.", 400);
         }
         if (request.gameID() < 0) {
-            throw new UnauthorizedException("[400] Bad Request: Invalid game ID provided whilst attempting to join game.");
+            throw new ServiceException("Bad Request: Invalid game ID provided whilst attempting to join game.", 400);
         }
         try {
             AuthData thisAuth = auth.getAuth(request.authToken());
             if (thisAuth == null) {
-                throw new UnauthorizedException("[401] Unauthorized: Unknown authorization token provided whilst attempting to join game.");
+                throw new ServiceException("Unauthorized: Unknown authorization token provided whilst attempting to join game.", 401);
             }
             GameData thisGame = game.getGame(request.gameID());
             GameData newGame;
             if (thisGame == null) {
-                throw new ForbiddenException("[403] Forbidden: Unknown game ID provided whilst attempting to join game.");
+                throw new ServiceException("Forbidden: Unknown game ID provided whilst attempting to join game.", 403);
             }
             if (request.playerColor() == ChessGame.TeamColor.WHITE && thisGame.whiteUsername().isEmpty()) {
                 newGame = new GameData(request.gameID(), thisAuth.username(), thisGame.blackUsername(), thisGame.gameName(), thisGame.game());
             } else if (request.playerColor() == ChessGame.TeamColor.BLACK && thisGame.blackUsername().isEmpty()) {
                 newGame = new GameData(request.gameID(), thisGame.whiteUsername(), thisAuth.username(), thisGame.gameName(), thisGame.game());
             } else {
-                throw new ForbiddenException("[403] Forbidden: Unable to join game since the provided team is already taken.");
+                throw new ServiceException("Forbidden: Unable to join game since the provided team is already taken.", 403);
             }
             game.updateGame(newGame);
         } catch (DataAccessException e) {
-            throw new InternalServerErrorException("[500] Internal Server Error occurred whilst attempting to join game: " + e);
+            throw new ServiceException("Internal Server Error occurred whilst attempting to join game: " + e, 500);
         }
         return new JoinGameResult();
     }

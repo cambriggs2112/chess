@@ -18,28 +18,30 @@ public class RegisterService {
         this.user = user;
     }
 
-    public RegisterResult register(RegisterRequest request) throws BadRequestException, ForbiddenException, InternalServerErrorException {
-        String authToken;
+    public RegisterResult register(RegisterRequest request) throws ServiceException {
+        String authToken = null;
         if (request.username() == null || request.username().isEmpty()) {
-            throw new BadRequestException("[400] Bad Request: Username is required to register.");
+            throw new ServiceException("Bad Request: Username is required to register.", 400);
         }
         if (request.password() == null || request.password().isEmpty()) {
-            throw new BadRequestException("[400] Bad Request: Password is required to register.");
+            throw new ServiceException("Bad Request: Password is required to register.", 400);
         }
         if (request.email() == null || request.email().isEmpty()) {
-            throw new BadRequestException("[400] Bad Request: Email is required to register.");
+            throw new ServiceException("Bad Request: Email is required to register.", 400);
         }
         try {
             if (user.getUser(request.username()) != null) {
-                throw new ForbiddenException("[403] Forbidden: Unable to register since provided username is already taken.");
+                throw new ServiceException("Forbidden: Unable to register since provided username is already taken.", 403);
             }
             UserData newUser = new UserData(request.username(), request.password(), request.email());
             user.createUser(newUser);
-            authToken = UUID.randomUUID().toString();
+            while (authToken == null || auth.getAuth(authToken) != null) { // Used to effectively guarantee authToken is unique
+                authToken = UUID.randomUUID().toString();
+            }
             AuthData newAuth = new AuthData(authToken, request.username());
             auth.createAuth(newAuth);
         } catch (DataAccessException e) {
-            throw new InternalServerErrorException("[500] Internal Server Error occurred whilst attempting to register: " + e);
+            throw new ServiceException("Internal Server Error occurred whilst attempting to register: " + e, 500);
         }
         return new RegisterResult(request.username(), authToken);
     }
