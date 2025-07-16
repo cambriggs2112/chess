@@ -2,6 +2,9 @@ package service;
 
 import dataaccess.*;
 
+/**
+ * A service that clears the application.
+ */
 public class ClearApplicationService {
     public record ClearApplicationRequest() {}
     public record ClearApplicationResult() {}
@@ -16,6 +19,13 @@ public class ClearApplicationService {
         this.user = user;
     }
 
+    /**
+     * Clears all databases in the application
+     *
+     * @param request the request object
+     * @return a result object
+     * @throws ServiceException if error occurs with data access (500)
+     */
     public ClearApplicationResult clearApplication(ClearApplicationRequest request) throws ServiceException {
         try {
             auth.clear();

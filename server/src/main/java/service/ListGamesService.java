@@ -7,6 +7,11 @@ import dataaccess.*;
 import model.AuthData;
 import model.GameData;
 
+/**
+ * A service that lists games to authenticated users.
+ * Each listed entry contains a game ID, the usernames of both players (if applicable), and the
+ * game name.
+ */
 public class ListGamesService {
     public record ListGamesRequest(String authToken) {}
     public record ListGamesResult(ArrayList<ListGamesResultElement> games) {}
@@ -22,6 +27,15 @@ public class ListGamesService {
         this.user = user;
     }
 
+    /**
+     * Returns an ArrayList of games to a user.
+     *
+     * @param request the request object (authToken)
+     * @return a result object (ArrayList of objects containing game IDs, white usernames,
+     *                black usernames, and game names)
+     * @throws ServiceException if authorization token is incorrect (401) or error occurs with
+     *                data access (500)
+     */
     public ListGamesResult listGames(ListGamesRequest request) throws ServiceException {
         ArrayList<GameData> gameList;
         ArrayList<ListGamesResultElement> result = new ArrayList<ListGamesResultElement>();

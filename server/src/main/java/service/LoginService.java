@@ -4,6 +4,10 @@ import dataaccess.*;
 import model.*;
 import java.util.UUID;
 
+/**
+ * A service that logs users in.
+ * A username and password are provided by the user, and if both are correct, an authorization token is obtained.
+ */
 public class LoginService {
     public record LoginRequest(String username, String password) {}
     public record LoginResult(String username, String authToken) {}
@@ -18,6 +22,15 @@ public class LoginService {
         this.user = user;
     }
 
+    /**
+     * Logs a user in with a username and password to obtain an authorization token.
+     * Adds authorization data to the database.
+     *
+     * @param request the request object (username, password)
+     * @return a result object (username, authToken)
+     * @throws ServiceException if required fields are missing (400), username or password is
+     *                incorrect (401), or error occurs with data access (500)
+     */
     public LoginResult login(LoginRequest request) throws ServiceException {
         String authToken = null;
         if (request.username() == null || request.username().isEmpty()) {

@@ -5,6 +5,9 @@ import service.*;
 import spark.Request;
 import spark.Response;
 
+/**
+ * An HTTP handler for the List Games service.
+ */
 public class ListGamesHandler {
     private ListGamesService listGamesService;
 
@@ -12,6 +15,13 @@ public class ListGamesHandler {
         this.listGamesService = listGamesService;
     }
 
+    /**
+     * Calls listGames with HTTP/JSON input and output.
+     * Used in Spark.get() in Server.java.
+     *
+     * @param request the HTTP request object
+     * @param response the HTTP response object
+     */
     public Object handleRequest(Request request, Response response) {
         Gson serializer = new Gson();
         String authToken = request.headers("authorization");

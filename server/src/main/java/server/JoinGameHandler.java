@@ -5,6 +5,9 @@ import service.*;
 import spark.Request;
 import spark.Response;
 
+/**
+ * An HTTP handler for the Join Game service.
+ */
 public class JoinGameHandler {
     private JoinGameService joinGameService;
 
@@ -12,6 +15,13 @@ public class JoinGameHandler {
         this.joinGameService = joinGameService;
     }
 
+    /**
+     * Calls joinGame with HTTP/JSON input and output.
+     * Used in Spark.put() in Server.java.
+     *
+     * @param request the HTTP request object
+     * @param response the HTTP response object
+     */
     public Object handleRequest(Request request, Response response) {
         Gson serializer = new Gson();
         JoinGameService.JoinGameRequest req = serializer.fromJson(request.body(), JoinGameService.JoinGameRequest.class);

@@ -4,6 +4,11 @@ import dataaccess.*;
 import model.*;
 import java.util.UUID;
 
+/**
+ * A service that registers new users.
+ * A username, password, and email are provided to add a new user.
+ * An authorization token is obtained to automatically log the user in.
+ */
 public class RegisterService {
     public record RegisterRequest(String username, String password, String email) {}
     public record RegisterResult(String username, String authToken) {}
@@ -18,6 +23,15 @@ public class RegisterService {
         this.user = user;
     }
 
+    /**
+     * Registers a new user and logs the new user in.
+     * Adds user data and authorization data to the database.
+     *
+     * @param request the request object (username, password, email)
+     * @return a result object (username, authToken)
+     * @throws ServiceException if required fields are missing (400), username is already taken
+     *                (403), or error occurs with data access (500)
+     */
     public RegisterResult register(RegisterRequest request) throws ServiceException {
         String authToken = null;
         if (request.username() == null || request.username().isEmpty()) {

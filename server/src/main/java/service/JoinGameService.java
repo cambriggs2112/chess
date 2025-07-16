@@ -4,6 +4,11 @@ import chess.ChessGame;
 import dataaccess.*;
 import model.*;
 
+/**
+ * A service that allows users to join games.
+ * An authenticated user chooses a player color (BLACK or WHITE) and chooses a game by game ID to join.
+ * Users are not allowed to join occupied teams.
+ */
 public class JoinGameService {
     public record JoinGameRequest(String authToken, ChessGame.TeamColor playerColor, Integer gameID) {}
     public record JoinGameResult() {}
@@ -18,6 +23,16 @@ public class JoinGameService {
         this.user = user;
     }
 
+    /**
+     * Adds a user to an existing game by game ID.
+     * The user must provide a team color to be added to (WHITE or BLACK).
+     *
+     * @param request the request object (authToken, playerColor, gameID)
+     * @return a result object
+     * @throws ServiceException if required fields are missing or invalid (400), authorization
+     *                token is incorrect (401), game ID is unknown (403), provided team color
+     *                is already taken (403), or error occurs with data access (500)
+     */
     public JoinGameResult joinGame(JoinGameRequest request) throws ServiceException {
         if (request.authToken() == null) {
             throw new ServiceException("ERROR: Unauthorized: Unknown authorization token provided whilst attempting to join game.", 401);

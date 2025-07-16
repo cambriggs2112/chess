@@ -5,6 +5,9 @@ import service.*;
 import spark.Request;
 import spark.Response;
 
+/**
+ * An HTTP handler for the Register service.
+ */
 public class RegisterHandler {
     private RegisterService registerService;
 
@@ -12,6 +15,13 @@ public class RegisterHandler {
         this.registerService = registerService;
     }
 
+    /**
+     * Calls register with HTTP/JSON input and output.
+     * Used in Spark.post() in Server.java.
+     *
+     * @param request the HTTP request object
+     * @param response the HTTP response object
+     */
     public Object handleRequest(Request request, Response response) {
         Gson serializer = new Gson();
         RegisterService.RegisterRequest req = serializer.fromJson(request.body(), RegisterService.RegisterRequest.class);

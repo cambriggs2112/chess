@@ -5,6 +5,9 @@ import service.*;
 import spark.Request;
 import spark.Response;
 
+/**
+ * An HTTP handler for the Login service.
+ */
 public class LoginHandler {
     private LoginService loginService;
 
@@ -12,6 +15,13 @@ public class LoginHandler {
         this.loginService = loginService;
     }
 
+    /**
+     * Calls login with HTTP/JSON input and output.
+     * Used in Spark.post() in Server.java.
+     *
+     * @param request the HTTP request object
+     * @param response the HTTP response object
+     */
     public Object handleRequest(Request request, Response response) {
         Gson serializer = new Gson();
         LoginService.LoginRequest req = serializer.fromJson(request.body(), LoginService.LoginRequest.class);

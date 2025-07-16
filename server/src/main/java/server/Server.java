@@ -4,6 +4,9 @@ import spark.*;
 import dataaccess.*;
 import service.*;
 
+/**
+ * A server that processes HTTP requests/responses and performs services on its databases.
+ */
 public class Server {
     private AuthDAO auths;
     private GameDAO games;
@@ -43,12 +46,17 @@ public class Server {
         this.registerHandler = new RegisterHandler(registerService);
     }
 
+    /**
+     * Generates a connection on a given port and starts the server loop.
+     *
+     * @param desiredPort the intended port
+     * @return the actual port
+     */
     public int run(int desiredPort) {
         Spark.port(desiredPort);
 
         Spark.staticFiles.location("web");
 
-        // Register your endpoints and handle exceptions here.
         Spark.delete("/db", (req, res) -> clearApplicationHandler.handleRequest(req, res));
         Spark.post("/game", (req, res) -> createGameHandler.handleRequest(req, res));
         Spark.put("/game", (req, res) -> joinGameHandler.handleRequest(req, res));
@@ -57,17 +65,15 @@ public class Server {
         Spark.delete("/session", (req, res) -> logoutHandler.handleRequest(req, res));
         Spark.post("/user", (req, res) -> registerHandler.handleRequest(req, res));
 
-        //This line initializes the server and can be removed once you have a functioning endpoint 
-        Spark.init();
-
         Spark.awaitInitialization();
         return Spark.port();
     }
 
+    /**
+     * Stops the server loop
+     */
     public void stop() {
         Spark.stop();
         Spark.awaitStop();
     }
-
-
 }

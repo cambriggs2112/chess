@@ -5,6 +5,10 @@ import dataaccess.*;
 import model.GameData;
 import java.util.UUID;
 
+/**
+ * A service that create games.
+ * A name is provided by an authenticated user to create a game with a unique game ID.
+ */
 public class CreateGameService {
     public record CreateGameRequest(String authToken, String gameName) {}
     public record CreateGameResult(Integer gameID) {}
@@ -19,6 +23,16 @@ public class CreateGameService {
         this.user = user;
     }
 
+    /**
+     * Adds a new game to the database by obtaining a game name from the user and generating a
+     * unique game ID. A new ChessGame object is created and null username fields are generated.
+     * A game ID is returned to the user upon successful game creation.
+     *
+     * @param request the request object (authToken, gameName)
+     * @return a result object (gameID)
+     * @throws ServiceException if required fields are missing (400), authorization token is
+     *                incorrect (401), or error occurs with data access (500)
+     */
     public CreateGameResult createGame(CreateGameRequest request) throws ServiceException {
         Integer gameID = null;
         if (request.gameName() == null || request.gameName().isEmpty()) {
