@@ -38,7 +38,7 @@ public class LoginService {
             if (thisUser == null) {
                 throw new ServiceException("ERROR: Unauthorized: Incorrect username provided whilst attempting to login.", 401);
             }
-            if (!request.password().equals(thisUser.password())) {
+            if (!request.password().equals(thisUser.password())) { // Put de-hash here
                 throw new ServiceException("ERROR: Unauthorized: Incorrect password provided whilst attempting to login.", 401);
             }
             while (authToken == null || auth.getAuth(authToken) != null) { // Used to effectively guarantee authToken is unique

@@ -40,7 +40,7 @@ public class RegisterService {
             MemoryUserDAO user = new MemoryUserDAO();
             if (user.getUser(request.username()) != null) {
                 throw new ServiceException("ERROR: Forbidden: Unable to register since provided username is already taken.", 403);
-            }
+            } // Put hash here
             UserData newUser = new UserData(request.username(), request.password(), request.email());
             user.createUser(newUser);
             while (authToken == null || auth.getAuth(authToken) != null) { // Used to effectively guarantee authToken is unique

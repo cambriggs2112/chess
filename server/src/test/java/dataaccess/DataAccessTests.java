@@ -10,6 +10,7 @@ public class DataAccessTests {
         try {
             SQLAuthDAO auth = new SQLAuthDAO();
             SQLGameDAO game = new SQLGameDAO();
+            SQLUserDAO user = new SQLUserDAO();
             auth.clear();
             game.clear();
             auth.createAuth(new AuthData("testToken", "testName"));
@@ -39,6 +40,13 @@ public class DataAccessTests {
             System.out.println(game.getGame(1234).blackUsername());
             System.out.println(game.getGame(1234).gameName());
             game.clear();
+            user.createUser(new UserData("testName", "testPass", "test@email.com"));
+            System.out.println(user.getUser("testName").username());
+            System.out.println(user.getUser("testName").password());
+            System.out.println(user.getUser("testName").email());
+            System.out.println(user.listUsers().size());
+            user.clear();
+            System.out.println(user.listUsers().size());
         } catch (Exception e) {
             System.out.println("Exception: " + e);
         }

@@ -1,8 +1,8 @@
 package dataaccess;
 
 import model.UserData;
-
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -19,7 +19,7 @@ public class SQLUserDAO implements UserDAO {
                       Password varchar(64) NOT NULL,
                       Email varchar(256) NOT NULL
                     );
-                    """).executeUpdate(); // Password is hashed
+                    """).executeUpdate(); // Password is hashed in code that uses this DAO
         } catch (SQLException e) {
             throw new DataAccessException("Unable to create user table: " + e);
         }
@@ -32,7 +32,14 @@ public class SQLUserDAO implements UserDAO {
      * @throws DataAccessException if username is null or already exists
      */
     public void createUser(UserData newUser) throws DataAccessException {
-
+        try (Connection conn = DatabaseManager.getConnection()) {
+            conn.prepareStatement(
+                    String.format("INSERT INTO User (Username, Password, Email) VALUES ('%s', '%s', '%s');",
+                            newUser.username(), newUser.password(), newUser.email())
+            ).executeUpdate();
+        } catch (SQLException e) {
+            throw new DataAccessException("Unable to create user data: " + e);
+        }
     }
 
     /**
@@ -42,20 +49,47 @@ public class SQLUserDAO implements UserDAO {
      * @throws DataAccessException if username is null
      */
     public UserData getUser(String username) throws DataAccessException {
-        return null;
+        try (Connection conn = DatabaseManager.getConnection()) {
+            ResultSet results = conn.prepareStatement(
+                    String.format("SELECT * FROM User WHERE Username='%s';", username)
+            ).executeQuery();
+            if (results.next()) { // detect if an object is in the set
+                return new UserData(username, results.getString("Password"), results.getString("Email"));
+            } else {
+                return null;
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException("Unable to get user data: " + e);
+        }
     }
 
     /**
      * @return ArrayList of all user data objects in the database
      */
     public ArrayList<UserData> listUsers() throws DataAccessException {
-        return null;
+        ArrayList<UserData> resultList = new ArrayList<UserData>();
+        try (Connection conn = DatabaseManager.getConnection()) {
+            ResultSet results = conn.prepareStatement("SELECT * FROM User;").executeQuery();
+            while (results.next()) {
+                resultList.add(new UserData(
+                        results.getString("Username"),
+                        results.getString("Password"),
+                        results.getString("Email")));
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException("Unable to list user data: " + e);
+        }
+        return resultList;
     }
 
     /**
      * Deletes all user data in the database
      */
     public void clear() throws DataAccessException {
-
+        try (Connection conn = DatabaseManager.getConnection()) {
+            conn.prepareStatement("TRUNCATE User;").executeUpdate();
+        } catch (SQLException e) {
+            throw new DataAccessException("Unable to clear user table: " + e);
+        }
     }
 }
