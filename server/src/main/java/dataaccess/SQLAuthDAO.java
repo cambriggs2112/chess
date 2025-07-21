@@ -48,7 +48,7 @@ public class SQLAuthDAO implements AuthDAO {
     public AuthData getAuth(String authToken) throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()) {
             ResultSet results = conn.prepareStatement(
-                    String.format("SELECT Username FROM Auth WHERE AuthToken='%s';", authToken)
+                    String.format("SELECT * FROM Auth WHERE AuthToken='%s';", authToken)
             ).executeQuery();
             if (results.next()) { // detect if an object is in the set
                 return new AuthData(authToken, results.getString("Username"));
@@ -66,8 +66,7 @@ public class SQLAuthDAO implements AuthDAO {
     public ArrayList<AuthData> listAuths() throws DataAccessException {
         ArrayList<AuthData> resultList = new ArrayList<AuthData>();
         try (Connection conn = DatabaseManager.getConnection()) {
-            ResultSet results = conn.prepareStatement(
-                    "SELECT AuthToken, Username FROM Auth;").executeQuery();
+            ResultSet results = conn.prepareStatement("SELECT * FROM Auth;").executeQuery();
             while (results.next()) {
                 resultList.add(new AuthData(
                         results.getString("AuthToken"),

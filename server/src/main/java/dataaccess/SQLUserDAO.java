@@ -19,7 +19,7 @@ public class SQLUserDAO implements UserDAO {
                       Password varchar(64) NOT NULL,
                       Email varchar(256) NOT NULL
                     );
-                    """).executeUpdate();
+                    """).executeUpdate(); // Password is hashed
         } catch (SQLException e) {
             throw new DataAccessException("Unable to create user table: " + e);
         }
