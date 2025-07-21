@@ -8,11 +8,9 @@ import java.util.ArrayList;
  * A memory-based database of user data (username, password, email) that uses an ArrayList.
  */
 public class MemoryUserDAO implements UserDAO {
-    private ArrayList<UserData> userDatabase;
+    private static ArrayList<UserData> userDatabase;
 
-    public MemoryUserDAO() {
-        this.userDatabase = new ArrayList<UserData>();
-    }
+    public MemoryUserDAO() {}
 
     /**
      * Adds an object of user data to the database

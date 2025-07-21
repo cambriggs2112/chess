@@ -7,8 +7,8 @@ import java.util.ArrayList;
  * An SQL-based database of user data (username, password, email).
  */
 public class SQLUserDAO implements UserDAO {
-    public SQLUserDAO() {
-
+    public SQLUserDAO() throws DataAccessException {
+        DatabaseManager.createDatabase();
     }
 
     /**

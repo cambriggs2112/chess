@@ -9,11 +9,7 @@ import spark.Response;
  * An HTTP handler for the Create Game service.
  */
 public class CreateGameHandler {
-    private CreateGameService createGameService;
-
-    public CreateGameHandler(CreateGameService createGameService) {
-        this.createGameService = createGameService;
-    }
+    public CreateGameHandler() {}
 
     /**
      * Calls createGame with HTTP/JSON input and output.
@@ -24,11 +20,12 @@ public class CreateGameHandler {
      */
     public Object handleRequest(Request request, Response response) {
         Gson gson = new Gson();
+        CreateGameService service = new CreateGameService();
         CreateGameService.CreateGameRequest req = gson.fromJson(request.body(), CreateGameService.CreateGameRequest.class);
         String authToken = request.headers("authorization");
         req = new CreateGameService.CreateGameRequest(authToken, req.gameName());
         try {
-            CreateGameService.CreateGameResult res = createGameService.createGame(req);
+            CreateGameService.CreateGameResult res = service.createGame(req);
             response.status(200);
             return gson.toJson(res);
         } catch (ServiceException e) {

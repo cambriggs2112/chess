@@ -54,7 +54,7 @@ public class ServiceTests {
 
     @Test
     public void clearApplicationOnce() {
-        ClearApplicationService service = new ClearApplicationService(auths, games, users);
+        ClearApplicationService service = new ClearApplicationService();
         ClearApplicationService.ClearApplicationRequest req = new ClearApplicationService.ClearApplicationRequest();
         try {
             service.clearApplication(req);
@@ -66,7 +66,7 @@ public class ServiceTests {
 
     @Test
     public void clearApplicationTwice() {
-        ClearApplicationService service = new ClearApplicationService(auths, games, users);
+        ClearApplicationService service = new ClearApplicationService();
         ClearApplicationService.ClearApplicationRequest req = new ClearApplicationService.ClearApplicationRequest();
         try {
             service.clearApplication(req);
@@ -79,7 +79,7 @@ public class ServiceTests {
 
     @Test
     public void createGameNormally() {
-        CreateGameService service = new CreateGameService(auths, games, users);
+        CreateGameService service = new CreateGameService();
         CreateGameService.CreateGameRequest req = new CreateGameService.CreateGameRequest(
                 existingAuth.authToken(), "chess");
         CreateGameService.CreateGameResult res = null;
@@ -104,7 +104,7 @@ public class ServiceTests {
 
     @Test
     public void createGameWithoutAuth() {
-        CreateGameService service = new CreateGameService(auths, games, users);
+        CreateGameService service = new CreateGameService();
         CreateGameService.CreateGameRequest req = new CreateGameService.CreateGameRequest(
                 "incorrect-auth-token", "chess");
         try {
@@ -125,7 +125,7 @@ public class ServiceTests {
 
     @Test
     public void joinGameNormally() { // Note: WHITE is taken.
-        JoinGameService service = new JoinGameService(auths, games, users);
+        JoinGameService service = new JoinGameService();
         JoinGameService.JoinGameRequest req = new JoinGameService.JoinGameRequest(
                 existingAuth.authToken(), ChessGame.TeamColor.BLACK, existingGame.gameID());
         try {
@@ -151,7 +151,7 @@ public class ServiceTests {
 
     @Test
     public void joinGameAsWhite() { // Note: WHITE is taken.
-        JoinGameService service = new JoinGameService(auths, games, users);
+        JoinGameService service = new JoinGameService();
         JoinGameService.JoinGameRequest req = new JoinGameService.JoinGameRequest(
                 existingAuth.authToken(), ChessGame.TeamColor.WHITE, existingGame.gameID());
         try {
@@ -177,7 +177,7 @@ public class ServiceTests {
 
     @Test
     public void listGamesNormally() {
-        ListGamesService service = new ListGamesService(auths, games, users);
+        ListGamesService service = new ListGamesService();
         ListGamesService.ListGamesRequest req = new ListGamesService.ListGamesRequest(
                 existingAuth.authToken());
         ListGamesService.ListGamesResult res = null;
@@ -207,7 +207,7 @@ public class ServiceTests {
 
     @Test
     public void listGamesWithoutAuth() {
-        ListGamesService service = new ListGamesService(auths, games, users);
+        ListGamesService service = new ListGamesService();
         ListGamesService.ListGamesRequest req = new ListGamesService.ListGamesRequest(
                 "incorrect-auth-token");
         try {
@@ -220,7 +220,7 @@ public class ServiceTests {
 
     @Test
     public void loginNormally() {
-        LoginService service = new LoginService(auths, games, users);
+        LoginService service = new LoginService();
         LoginService.LoginRequest req = new LoginService.LoginRequest(
                 existingUser.username(), existingUser.password());
         LoginService.LoginResult res = null;
@@ -249,7 +249,7 @@ public class ServiceTests {
 
     @Test
     public void loginIncorrectPassword() {
-        LoginService service = new LoginService(auths, games, users);
+        LoginService service = new LoginService();
         LoginService.LoginRequest req = new LoginService.LoginRequest(
                 existingUser.username(), "incorrect-password");
         try {
@@ -270,7 +270,7 @@ public class ServiceTests {
 
     @Test
     public void logoutNormally() {
-        LogoutService service = new LogoutService(auths, games, users);
+        LogoutService service = new LogoutService();
         LogoutService.LogoutRequest req = new LogoutService.LogoutRequest(
                 existingAuth.authToken());
         try {
@@ -290,7 +290,7 @@ public class ServiceTests {
 
     @Test
     public void logoutWithoutAuth() {
-        LogoutService service = new LogoutService(auths, games, users);
+        LogoutService service = new LogoutService();
         LogoutService.LogoutRequest req = new LogoutService.LogoutRequest(
                 "incorrect-auth-token");
         try {
@@ -311,7 +311,7 @@ public class ServiceTests {
 
     @Test
     public void registerNormally() {
-        RegisterService service = new RegisterService(auths, games, users);
+        RegisterService service = new RegisterService();
         RegisterService.RegisterRequest req = new RegisterService.RegisterRequest(
                 "user2", "pass2", "email2@outlook.com()");
         RegisterService.RegisterResult res = null;
@@ -344,7 +344,7 @@ public class ServiceTests {
 
     @Test
     public void registerTakenUsername() {
-        RegisterService service = new RegisterService(auths, games, users);
+        RegisterService service = new RegisterService();
         RegisterService.RegisterRequest req = new RegisterService.RegisterRequest(
                 existingUser.username(), "pass2", "email2@outlook.com()");
         try {

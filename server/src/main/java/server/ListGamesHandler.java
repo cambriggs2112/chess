@@ -9,11 +9,7 @@ import spark.Response;
  * An HTTP handler for the List Games service.
  */
 public class ListGamesHandler {
-    private ListGamesService listGamesService;
-
-    public ListGamesHandler(ListGamesService listGamesService) {
-        this.listGamesService = listGamesService;
-    }
+    public ListGamesHandler() {}
 
     /**
      * Calls listGames with HTTP/JSON input and output.
@@ -24,10 +20,11 @@ public class ListGamesHandler {
      */
     public Object handleRequest(Request request, Response response) {
         Gson gson = new Gson();
+        ListGamesService service = new ListGamesService();
         String authToken = request.headers("authorization");
         ListGamesService.ListGamesRequest req = new ListGamesService.ListGamesRequest(authToken);
         try {
-            ListGamesService.ListGamesResult res = listGamesService.listGames(req);
+            ListGamesService.ListGamesResult res = service.listGames(req);
             response.status(200);
             return gson.toJson(res);
         } catch (ServiceException e) {

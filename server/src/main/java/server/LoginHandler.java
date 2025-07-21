@@ -9,11 +9,7 @@ import spark.Response;
  * An HTTP handler for the Login service.
  */
 public class LoginHandler {
-    private LoginService loginService;
-
-    public LoginHandler(LoginService loginService) {
-        this.loginService = loginService;
-    }
+    public LoginHandler() {}
 
     /**
      * Calls login with HTTP/JSON input and output.
@@ -24,9 +20,10 @@ public class LoginHandler {
      */
     public Object handleRequest(Request request, Response response) {
         Gson gson = new Gson();
+        LoginService service = new LoginService();
         LoginService.LoginRequest req = gson.fromJson(request.body(), LoginService.LoginRequest.class);
         try {
-            LoginService.LoginResult res = loginService.login(req);
+            LoginService.LoginResult res = service.login(req);
             response.status(200);
             return gson.toJson(res);
         } catch (ServiceException e) {

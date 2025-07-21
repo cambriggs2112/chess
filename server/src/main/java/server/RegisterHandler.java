@@ -9,11 +9,7 @@ import spark.Response;
  * An HTTP handler for the Register service.
  */
 public class RegisterHandler {
-    private RegisterService registerService;
-
-    public RegisterHandler(RegisterService registerService) {
-        this.registerService = registerService;
-    }
+    public RegisterHandler() {}
 
     /**
      * Calls register with HTTP/JSON input and output.
@@ -24,9 +20,10 @@ public class RegisterHandler {
      */
     public Object handleRequest(Request request, Response response) {
         Gson gson = new Gson();
+        RegisterService service = new RegisterService();
         RegisterService.RegisterRequest req = gson.fromJson(request.body(), RegisterService.RegisterRequest.class);
         try {
-            RegisterService.RegisterResult res = registerService.register(req);
+            RegisterService.RegisterResult res = service.register(req);
             response.status(200);
             return gson.toJson(res);
         } catch (ServiceException e) {

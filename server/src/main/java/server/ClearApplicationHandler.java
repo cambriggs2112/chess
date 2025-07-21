@@ -10,11 +10,7 @@ import spark.Response;
  * An HTTP handler for the Clear Application service.
  */
 public class ClearApplicationHandler {
-    private ClearApplicationService clearApplicationService;
-
-    public ClearApplicationHandler(ClearApplicationService clearApplicationService) {
-        this.clearApplicationService = clearApplicationService;
-    }
+    public ClearApplicationHandler() {}
 
     /**
      * Calls clearApplication with HTTP/JSON input and output.
@@ -25,9 +21,10 @@ public class ClearApplicationHandler {
      */
     public Object handleRequest(Request request, Response response) {
         Gson gson = new Gson();
+        ClearApplicationService service = new ClearApplicationService();
         ClearApplicationService.ClearApplicationRequest req = gson.fromJson(request.body(), ClearApplicationService.ClearApplicationRequest.class);
         try {
-            ClearApplicationService.ClearApplicationResult res = clearApplicationService.clearApplication(req);
+            ClearApplicationService.ClearApplicationResult res = service.clearApplication(req);
             response.status(200);
             return gson.toJson(res);
         } catch (ServiceException e) {

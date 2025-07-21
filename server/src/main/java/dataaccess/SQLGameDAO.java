@@ -7,8 +7,8 @@ import java.util.ArrayList;
  * An SQL-based database of game data (gameID, whiteUsername, blackUsername, gameName, game).
  */
 public class SQLGameDAO implements GameDAO {
-    public SQLGameDAO() {
-
+    public SQLGameDAO() throws DataAccessException {
+        DatabaseManager.createDatabase();
     }
 
     /**

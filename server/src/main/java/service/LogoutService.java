@@ -9,15 +9,7 @@ public class LogoutService {
     public record LogoutRequest(String authToken) {}
     public record LogoutResult() {}
 
-    private AuthDAO auth;
-    private GameDAO game;
-    private UserDAO user;
-
-    public LogoutService(AuthDAO auth, GameDAO game, UserDAO user) {
-        this.auth = auth;
-        this.game = game;
-        this.user = user;
-    }
+    public LogoutService() {}
 
     /**
      * Logs a user out and deletes authorization data from the database.
@@ -29,6 +21,7 @@ public class LogoutService {
      */
     public LogoutResult logout(LogoutRequest request) throws ServiceException {
         try {
+            MemoryAuthDAO auth = new MemoryAuthDAO();
             if (request.authToken() == null || auth.getAuth(request.authToken()) == null) {
                 throw new ServiceException("ERROR: Unauthorized: Unknown authorization token provided whilst attempting to logout.", 401);
             }

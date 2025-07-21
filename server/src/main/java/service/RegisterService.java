@@ -13,15 +13,7 @@ public class RegisterService {
     public record RegisterRequest(String username, String password, String email) {}
     public record RegisterResult(String username, String authToken) {}
 
-    private AuthDAO auth;
-    private GameDAO game;
-    private UserDAO user;
-
-    public RegisterService(AuthDAO auth, GameDAO game, UserDAO user) {
-        this.auth = auth;
-        this.game = game;
-        this.user = user;
-    }
+    public RegisterService() {}
 
     /**
      * Registers a new user and logs the new user in.
@@ -44,6 +36,8 @@ public class RegisterService {
             throw new ServiceException("ERROR: Bad Request: Email is required to register.", 400);
         }
         try {
+            MemoryAuthDAO auth = new MemoryAuthDAO();
+            MemoryUserDAO user = new MemoryUserDAO();
             if (user.getUser(request.username()) != null) {
                 throw new ServiceException("ERROR: Forbidden: Unable to register since provided username is already taken.", 403);
             }

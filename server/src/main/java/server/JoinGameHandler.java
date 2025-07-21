@@ -9,11 +9,7 @@ import spark.Response;
  * An HTTP handler for the Join Game service.
  */
 public class JoinGameHandler {
-    private JoinGameService joinGameService;
-
-    public JoinGameHandler(JoinGameService joinGameService) {
-        this.joinGameService = joinGameService;
-    }
+    public JoinGameHandler() {}
 
     /**
      * Calls joinGame with HTTP/JSON input and output.
@@ -24,11 +20,12 @@ public class JoinGameHandler {
      */
     public Object handleRequest(Request request, Response response) {
         Gson gson = new Gson();
+        JoinGameService service = new JoinGameService();
         JoinGameService.JoinGameRequest req = gson.fromJson(request.body(), JoinGameService.JoinGameRequest.class);
         String authToken = request.headers("authorization");
         req = new JoinGameService.JoinGameRequest(authToken, req.playerColor(), req.gameID());
         try {
-            JoinGameService.JoinGameResult res = joinGameService.joinGame(req);
+            JoinGameService.JoinGameResult res = service.joinGame(req);
             response.status(200);
             return gson.toJson(res);
         } catch (ServiceException e) {

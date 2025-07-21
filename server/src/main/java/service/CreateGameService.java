@@ -13,15 +13,7 @@ public class CreateGameService {
     public record CreateGameRequest(String authToken, String gameName) {}
     public record CreateGameResult(Integer gameID) {}
 
-    private AuthDAO auth;
-    private GameDAO game;
-    private UserDAO user;
-
-    public CreateGameService(AuthDAO auth, GameDAO game, UserDAO user) {
-        this.auth = auth;
-        this.game = game;
-        this.user = user;
-    }
+    public CreateGameService() {}
 
     /**
      * Adds a new game to the database by obtaining a game name from the user and generating a
@@ -39,6 +31,8 @@ public class CreateGameService {
             throw new ServiceException("ERROR: Bad Request: Game name is required to create game.", 400);
         }
         try {
+            MemoryAuthDAO auth = new MemoryAuthDAO();
+            MemoryGameDAO game = new MemoryGameDAO();
             if (request.authToken() == null || auth.getAuth(request.authToken()) == null) {
                 throw new ServiceException("ERROR: Unauthorized: Unknown authorization token provided whilst attempting to create game.", 401);
             }

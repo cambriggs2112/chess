@@ -7,10 +7,9 @@ import java.util.ArrayList;
  * An SQL-based database of authorization data (authToken, username).
  */
 public class SQLAuthDAO implements AuthDAO {
-    public SQLAuthDAO() {
-
+    public SQLAuthDAO() throws DataAccessException {
+        DatabaseManager.createDatabase();
     }
-
 
     /**
      * Adds an object of authorization data to the database

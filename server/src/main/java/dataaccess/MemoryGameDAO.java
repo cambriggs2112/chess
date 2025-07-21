@@ -8,11 +8,9 @@ import java.util.ArrayList;
  * game) that uses an ArrayList.
  */
 public class MemoryGameDAO implements GameDAO {
-    private ArrayList<GameData> gameDatabase;
+    private static ArrayList<GameData> gameDatabase;
 
-    public MemoryGameDAO() {
-        this.gameDatabase = new ArrayList<GameData>();
-    }
+    public MemoryGameDAO() {}
 
     /**
      * Adds an object of game data to the database

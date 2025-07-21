@@ -12,15 +12,7 @@ public class LoginService {
     public record LoginRequest(String username, String password) {}
     public record LoginResult(String username, String authToken) {}
 
-    private AuthDAO auth;
-    private GameDAO game;
-    private UserDAO user;
-
-    public LoginService(AuthDAO auth, GameDAO game, UserDAO user) {
-        this.auth = auth;
-        this.game = game;
-        this.user = user;
-    }
+    public LoginService() {}
 
     /**
      * Logs a user in with a username and password to obtain an authorization token.
@@ -40,6 +32,8 @@ public class LoginService {
             throw new ServiceException("ERROR: Bad Request: Password is required to login.", 400);
         }
         try {
+            MemoryAuthDAO auth = new MemoryAuthDAO();
+            MemoryUserDAO user = new MemoryUserDAO();
             UserData thisUser = user.getUser(request.username());
             if (thisUser == null) {
                 throw new ServiceException("ERROR: Unauthorized: Incorrect username provided whilst attempting to login.", 401);

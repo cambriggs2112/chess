@@ -13,15 +13,7 @@ public class JoinGameService {
     public record JoinGameRequest(String authToken, ChessGame.TeamColor playerColor, Integer gameID) {}
     public record JoinGameResult() {}
 
-    private AuthDAO auth;
-    private GameDAO game;
-    private UserDAO user;
-
-    public JoinGameService(AuthDAO auth, GameDAO game, UserDAO user) {
-        this.auth = auth;
-        this.game = game;
-        this.user = user;
-    }
+    public JoinGameService() {}
 
     /**
      * Adds a user to an existing game by game ID.
@@ -47,6 +39,8 @@ public class JoinGameService {
             throw new ServiceException("ERROR: Bad Request: Invalid game ID provided whilst attempting to join game.", 400);
         }
         try {
+            MemoryAuthDAO auth = new MemoryAuthDAO();
+            MemoryGameDAO game = new MemoryGameDAO();
             AuthData thisAuth = auth.getAuth(request.authToken());
             if (thisAuth == null) {
                 throw new ServiceException("ERROR: Unauthorized: Unknown authorization token provided whilst attempting to join game.", 401);

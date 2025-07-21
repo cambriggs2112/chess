@@ -9,11 +9,7 @@ import spark.Response;
  * An HTTP handler for the Logout service.
  */
 public class LogoutHandler {
-    private LogoutService logoutService;
-
-    public LogoutHandler(LogoutService logoutService) {
-        this.logoutService = logoutService;
-    }
+    public LogoutHandler() {}
 
     /**
      * Calls logout with HTTP/JSON input and output.
@@ -24,10 +20,11 @@ public class LogoutHandler {
      */
     public Object handleRequest(Request request, Response response) {
         Gson gson = new Gson();
+        LogoutService service = new LogoutService();
         String authToken = request.headers("authorization");
         LogoutService.LogoutRequest req = new LogoutService.LogoutRequest(authToken);
         try {
-            LogoutService.LogoutResult res = logoutService.logout(req);
+            LogoutService.LogoutResult res = service.logout(req);
             response.status(200);
             return gson.toJson(res);
         } catch (ServiceException e) {
