@@ -23,7 +23,7 @@ public class SQLGameDAO implements GameDAO {
                     );
                     """).executeUpdate();
         } catch (SQLException e) {
-            throw new DataAccessException("Unable to create table: " + e);
+            throw new DataAccessException("Unable to create game table: " + e);
         }
     }
 

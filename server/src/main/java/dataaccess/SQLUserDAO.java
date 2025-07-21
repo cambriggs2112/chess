@@ -21,7 +21,7 @@ public class SQLUserDAO implements UserDAO {
                     );
                     """).executeUpdate();
         } catch (SQLException e) {
-            throw new DataAccessException("Unable to create table: " + e);
+            throw new DataAccessException("Unable to create user table: " + e);
         }
     }
 
