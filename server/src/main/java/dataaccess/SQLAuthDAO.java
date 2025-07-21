@@ -2,6 +2,7 @@ package dataaccess;
 
 import model.AuthData;
 import java.util.ArrayList;
+import java.sql.*;
 
 /**
  * An SQL-based database of authorization data (authToken, username).
@@ -9,6 +10,16 @@ import java.util.ArrayList;
 public class SQLAuthDAO implements AuthDAO {
     public SQLAuthDAO() throws DataAccessException {
         DatabaseManager.createDatabase();
+        try (Connection conn = DatabaseManager.getConnection()) {
+            conn.prepareStatement("""
+                    CREATE TABLE IF NOT EXISTS Auth (
+                      AuthToken varchar(64) PRIMARY KEY,
+                      Username varchar(128) NOT NULL
+                    );
+                    """).executeUpdate();
+        } catch (SQLException e) {
+            throw new DataAccessException("Unable to create table: " + e);
+        }
     }
 
     /**

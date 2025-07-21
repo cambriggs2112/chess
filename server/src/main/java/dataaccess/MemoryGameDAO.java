@@ -1,5 +1,6 @@
 package dataaccess;
 
+import model.AuthData;
 import model.GameData;
 import java.util.ArrayList;
 
@@ -8,7 +9,7 @@ import java.util.ArrayList;
  * game) that uses an ArrayList.
  */
 public class MemoryGameDAO implements GameDAO {
-    private static ArrayList<GameData> gameDatabase;
+    private static ArrayList<GameData> gameDatabase = new ArrayList<GameData>();
 
     public MemoryGameDAO() {}
 

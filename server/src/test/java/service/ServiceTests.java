@@ -24,6 +24,9 @@ public class ServiceTests {
         existingGame = new GameData(1234, "user", null, "game", new ChessGame());
         existingUser = new UserData("user", "pass", "user@gmail.com");
         try {
+            auths.clear();
+            games.clear();
+            users.clear();
             auths.createAuth(existingAuth);
             games.createGame(existingGame);
             users.createUser(existingUser);

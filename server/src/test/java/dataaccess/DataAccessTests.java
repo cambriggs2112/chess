@@ -6,8 +6,10 @@ public class DataAccessTests {
     @Test
     public void sandbox() {
         try {
-            SQLAuthDAO test = new SQLAuthDAO();
-            System.out.println("Created database");
+            SQLAuthDAO test1 = new SQLAuthDAO();
+            SQLGameDAO test2 = new SQLGameDAO();
+            SQLUserDAO test3 = new SQLUserDAO();
+            System.out.println("Created database and tables");
         } catch (Exception e) {
             System.out.println("Exception: " + e);
         }

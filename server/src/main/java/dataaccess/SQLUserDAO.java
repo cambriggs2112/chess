@@ -1,6 +1,9 @@
 package dataaccess;
 
 import model.UserData;
+
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**
@@ -9,6 +12,17 @@ import java.util.ArrayList;
 public class SQLUserDAO implements UserDAO {
     public SQLUserDAO() throws DataAccessException {
         DatabaseManager.createDatabase();
+        try (Connection conn = DatabaseManager.getConnection()) {
+            conn.prepareStatement("""
+                    CREATE TABLE IF NOT EXISTS User (
+                      Username varchar(128) PRIMARY KEY,
+                      Password varchar(64) NOT NULL,
+                      Email varchar(256) NOT NULL
+                    );
+                    """).executeUpdate();
+        } catch (SQLException e) {
+            throw new DataAccessException("Unable to create table: " + e);
+        }
     }
 
     /**

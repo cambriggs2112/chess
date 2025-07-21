@@ -8,7 +8,7 @@ import java.util.ArrayList;
  * ArrayList.
  */
 public class MemoryAuthDAO implements AuthDAO {
-    private static ArrayList<AuthData> authDatabase;
+    private static ArrayList<AuthData> authDatabase = new ArrayList<AuthData>();
 
     public MemoryAuthDAO() {}
 

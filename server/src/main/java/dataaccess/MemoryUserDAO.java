@@ -1,5 +1,6 @@
 package dataaccess;
 
+import model.GameData;
 import model.UserData;
 
 import java.util.ArrayList;
@@ -8,7 +9,7 @@ import java.util.ArrayList;
  * A memory-based database of user data (username, password, email) that uses an ArrayList.
  */
 public class MemoryUserDAO implements UserDAO {
-    private static ArrayList<UserData> userDatabase;
+    private static ArrayList<UserData> userDatabase = new ArrayList<UserData>();
 
     public MemoryUserDAO() {}
 

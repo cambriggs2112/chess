@@ -1,6 +1,9 @@
 package dataaccess;
 
 import model.GameData;
+
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**
@@ -9,6 +12,19 @@ import java.util.ArrayList;
 public class SQLGameDAO implements GameDAO {
     public SQLGameDAO() throws DataAccessException {
         DatabaseManager.createDatabase();
+        try (Connection conn = DatabaseManager.getConnection()) {
+            conn.prepareStatement("""
+                    CREATE TABLE IF NOT EXISTS Game (
+                      GameID int PRIMARY KEY,
+                      WhiteUsername varchar(128),
+                      BlackUsername varchar(128),
+                      GameName varchar(128) NOT NULL,
+                      GameObject varchar(512) NOT NULL
+                    );
+                    """).executeUpdate();
+        } catch (SQLException e) {
+            throw new DataAccessException("Unable to create table: " + e);
+        }
     }
 
     /**
