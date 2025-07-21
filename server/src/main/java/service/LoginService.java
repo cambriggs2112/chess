@@ -2,6 +2,7 @@ package service;
 
 import dataaccess.*;
 import model.*;
+import org.mindrot.jbcrypt.BCrypt;
 import java.util.UUID;
 
 /**
@@ -38,7 +39,7 @@ public class LoginService {
             if (thisUser == null) {
                 throw new ServiceException("ERROR: Unauthorized: Incorrect username provided whilst attempting to login.", 401);
             }
-            if (!request.password().equals(thisUser.password())) { // Put de-hash here
+            if (!BCrypt.checkpw(request.password(), thisUser.password())) { // database password is hashed
                 throw new ServiceException("ERROR: Unauthorized: Incorrect password provided whilst attempting to login.", 401);
             }
             while (authToken == null || auth.getAuth(authToken) != null) { // Used to effectively guarantee authToken is unique
