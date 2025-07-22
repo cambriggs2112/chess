@@ -18,7 +18,7 @@ public class SQLAuthDAO implements AuthDAO {
                     );
                     """).executeUpdate();
         } catch (SQLException e) {
-            throw new DataAccessException("Unable to create auth table: " + e);
+            throw new DataAccessException("Unable to create authorization table: " + e);
         }
     }
 
@@ -26,16 +26,20 @@ public class SQLAuthDAO implements AuthDAO {
      * Adds an object of authorization data to the database
      *
      * @param newAuth the authorization data object to add
-     * @throws DataAccessException if authorization token already exists
+     * @throws DataAccessException if authorization token is null or already exists
      */
     public void createAuth(AuthData newAuth) throws DataAccessException {
+        if (getAuth(newAuth.authToken()) != null) {
+            throw new DataAccessException("Unable to create authorization data: Authorization token already exists.");
+        }
         try (Connection conn = DatabaseManager.getConnection()) {
             conn.prepareStatement(
                     String.format("INSERT INTO Auth (AuthToken, Username) VALUES ('%s', '%s');",
-                            newAuth.authToken(), newAuth.username())
+                            escapeApostrophes(newAuth.authToken()),
+                            escapeApostrophes(newAuth.username()))
             ).executeUpdate();
         } catch (SQLException e) {
-            throw new DataAccessException("Unable to create auth data: " + e);
+            throw new DataAccessException("Unable to create authorization data: " + e);
         }
     }
 
@@ -44,19 +48,23 @@ public class SQLAuthDAO implements AuthDAO {
      * token does not exist
      *
      * @param authToken the authorization token of the requested data
+     * @throws DataAccessException if authorization token is null
      */
     public AuthData getAuth(String authToken) throws DataAccessException {
+        if (authToken == null) {
+            throw new DataAccessException("Unable to get authorization data: Authorization token cannot be null.");
+        }
         try (Connection conn = DatabaseManager.getConnection()) {
             ResultSet results = conn.prepareStatement(
-                    String.format("SELECT * FROM Auth WHERE AuthToken='%s';", authToken)
-            ).executeQuery();
+                    String.format("SELECT * FROM Auth WHERE AuthToken='%s';",
+                            escapeApostrophes(authToken))).executeQuery();
             if (results.next()) { // detect if an object is in the set
                 return new AuthData(authToken, results.getString("Username"));
             } else {
                 return null;
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Unable to get auth data: " + e);
+            throw new DataAccessException("Unable to get authorization data: " + e);
         }
     }
 
@@ -73,7 +81,7 @@ public class SQLAuthDAO implements AuthDAO {
                         results.getString("Username")));
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Unable to list auth data: " + e);
+            throw new DataAccessException("Unable to list authorization data: " + e);
         }
         return resultList;
     }
@@ -82,14 +90,18 @@ public class SQLAuthDAO implements AuthDAO {
      * Deletes an object of authorization data by authorization token
      *
      * @param authToken the authorization token of the object to delete
+     * @throws DataAccessException if authorization token is null or does not exist
      */
     public void deleteAuth(String authToken) throws DataAccessException {
+        if (getAuth(authToken) == null) {
+            throw new DataAccessException("Unable to delete authorization data: Authorization token not found.");
+        }
         try (Connection conn = DatabaseManager.getConnection()) {
             conn.prepareStatement(
-                    String.format("DELETE FROM Auth WHERE AuthToken='%s';", authToken)
-            ).executeUpdate();
+                    String.format("DELETE FROM Auth WHERE AuthToken='%s';",
+                            escapeApostrophes(authToken))).executeUpdate();
         } catch (SQLException e) {
-            throw new DataAccessException("Unable to delete auth data: " + e);
+            throw new DataAccessException("Unable to delete authorization data: " + e);
         }
     }
 
@@ -100,7 +112,18 @@ public class SQLAuthDAO implements AuthDAO {
         try (Connection conn = DatabaseManager.getConnection()) {
             conn.prepareStatement("TRUNCATE Auth;").executeUpdate();
         } catch (SQLException e) {
-            throw new DataAccessException("Unable to clear auth table: " + e);
+            throw new DataAccessException("Unable to clear authorization table: " + e);
         }
+    }
+
+    private String escapeApostrophes(String str) {
+        String result = str;
+        for (int i = 0; i < result.length(); i++) {
+            if (result.charAt(i) == '\'') {
+                result = result.substring(0, i) + "'" + result.substring(i);
+                i++;
+            }
+        }
+        return result;
     }
 }

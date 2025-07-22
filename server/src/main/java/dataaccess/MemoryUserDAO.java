@@ -33,10 +33,10 @@ public class MemoryUserDAO implements UserDAO {
      * @throws DataAccessException if username is null
      */
     public UserData getUser(String username) throws DataAccessException {
+        if (username == null) {
+            throw new DataAccessException("Unable to get user data: Username cannot be null.");
+        }
         for (UserData u : userDatabase) {
-            if (username == null) {
-                throw new DataAccessException("Unable to get user data: Username cannot be null.");
-            }
             if (u.username().equals(username)) {
                 return u;
             }

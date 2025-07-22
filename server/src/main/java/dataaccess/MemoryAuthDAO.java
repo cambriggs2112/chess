@@ -33,10 +33,10 @@ public class MemoryAuthDAO implements AuthDAO {
      * @throws DataAccessException if authorization token is null
      */
     public AuthData getAuth(String authToken) throws DataAccessException {
+        if (authToken == null) {
+            throw new DataAccessException("Unable to get authorization data: Authorization token cannot be null.");
+        }
         for (AuthData a : authDatabase) {
-            if (authToken == null) {
-                throw new DataAccessException("Unable to get authorization data: Authorization token cannot be null.");
-            }
             if (a.authToken().equals(authToken)) {
                 return a;
             }

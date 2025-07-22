@@ -32,11 +32,15 @@ public class SQLUserDAO implements UserDAO {
      * @throws DataAccessException if username is null or already exists
      */
     public void createUser(UserData newUser) throws DataAccessException {
+        if (getUser(newUser.username()) != null) {
+            throw new DataAccessException("Unable to create user data: Username already exists.");
+        }
         try (Connection conn = DatabaseManager.getConnection()) {
             conn.prepareStatement(
                     String.format("INSERT INTO User (Username, Password, Email) VALUES ('%s', '%s', '%s');",
-                            newUser.username(), newUser.password(), newUser.email())
-            ).executeUpdate();
+                            escapeApostrophes(newUser.username()),
+                            escapeApostrophes(newUser.password()),
+                            escapeApostrophes(newUser.email()))).executeUpdate();
         } catch (SQLException e) {
             throw new DataAccessException("Unable to create user data: " + e);
         }
@@ -49,9 +53,13 @@ public class SQLUserDAO implements UserDAO {
      * @throws DataAccessException if username is null
      */
     public UserData getUser(String username) throws DataAccessException {
+        if (username == null) {
+            throw new DataAccessException("Unable to get user data: Username cannot be null.");
+        }
         try (Connection conn = DatabaseManager.getConnection()) {
             ResultSet results = conn.prepareStatement(
-                    String.format("SELECT * FROM User WHERE Username='%s';", username)
+                    String.format("SELECT * FROM User WHERE Username='%s';",
+                            escapeApostrophes(username))
             ).executeQuery();
             if (results.next()) { // detect if an object is in the set
                 return new UserData(username, results.getString("Password"), results.getString("Email"));
@@ -91,5 +99,16 @@ public class SQLUserDAO implements UserDAO {
         } catch (SQLException e) {
             throw new DataAccessException("Unable to clear user table: " + e);
         }
+    }
+
+    private String escapeApostrophes(String str) {
+        String result = str;
+        for (int i = 0; i < result.length(); i++) {
+            if (result.charAt(i) == '\'') {
+                result = result.substring(0, i) + "'" + result.substring(i);
+                i++;
+            }
+        }
+        return result;
     }
 }

@@ -4,6 +4,8 @@ import chess.ChessGame;
 import dataaccess.*;
 import model.*;
 import org.junit.jupiter.api.*;
+import org.mindrot.jbcrypt.BCrypt;
+
 import java.util.ArrayList;
 
 public class ServiceTests {
@@ -23,7 +25,7 @@ public class ServiceTests {
             // Add existing data to databases (assume a user registered, created a game, and joined as white)
             existingAuth = new AuthData("9ddacd1c-778b-9a6c-468f-bf7bc268b967", "user");
             existingGame = new GameData(1234, "user", null, "game", new ChessGame());
-            existingUser = new UserData("user", "pass", "user@gmail.com");
+            existingUser = new UserData("user", BCrypt.hashpw("pass", BCrypt.gensalt()), "user@gmail.com");
             auths.clear();
             games.clear();
             users.clear();
@@ -225,7 +227,7 @@ public class ServiceTests {
     public void loginNormally() {
         LoginService service = new LoginService();
         LoginService.LoginRequest req = new LoginService.LoginRequest(
-                existingUser.username(), existingUser.password());
+                existingUser.username(), "pass"); // existingUser.password() is the hashed equivalent
         LoginService.LoginResult res = null;
         try {
             res = service.login(req);

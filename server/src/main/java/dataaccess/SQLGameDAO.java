@@ -31,9 +31,12 @@ public class SQLGameDAO implements GameDAO {
      * Adds an object of game data to the database
      *
      * @param newGame the game data object to add
-     * @throws DataAccessException if game ID already exists
+     * @throws DataAccessException if game ID is null or already exists
      */
     public void createGame(GameData newGame) throws DataAccessException {
+        if (getGame(newGame.gameID()) != null) {
+            throw new DataAccessException("Unable to create game data: Game ID already exists.");
+        }
         Gson gson = new Gson();
         try (Connection conn = DatabaseManager.getConnection()) {
             if (newGame.whiteUsername() == null) {
@@ -41,36 +44,32 @@ public class SQLGameDAO implements GameDAO {
                     conn.prepareStatement(String.format(
                             "INSERT INTO Game (GameID, GameName, GameObject) VALUES ('%d', '%s', '%s');",
                             newGame.gameID(),
-                            newGame.gameName(),
-                            gson.toJson(newGame.game()))
-                    ).executeUpdate();
+                            escapeApostrophes(newGame.gameName()),
+                            escapeApostrophes(gson.toJson(newGame.game())))).executeUpdate();
                 } else {
                     conn.prepareStatement(String.format(
                             "INSERT INTO Game (GameID, BlackUsername, GameName, GameObject) VALUES ('%d', '%s', '%s', '%s');",
                             newGame.gameID(),
-                            newGame.blackUsername(),
-                            newGame.gameName(),
-                            gson.toJson(newGame.game()))
-                    ).executeUpdate();
+                            escapeApostrophes(newGame.blackUsername()),
+                            escapeApostrophes(newGame.gameName()),
+                            escapeApostrophes(gson.toJson(newGame.game())))).executeUpdate();
                 }
             } else {
                 if (newGame.blackUsername() == null) {
                     conn.prepareStatement(String.format(
                             "INSERT INTO Game (GameID, WhiteUsername, GameName, GameObject) VALUES ('%d', '%s', '%s', '%s');",
                             newGame.gameID(),
-                            newGame.whiteUsername(),
-                            newGame.gameName(),
-                            gson.toJson(newGame.game()))
-                    ).executeUpdate();
+                            escapeApostrophes(newGame.whiteUsername()),
+                            escapeApostrophes(newGame.gameName()),
+                            escapeApostrophes(gson.toJson(newGame.game())))).executeUpdate();
                 } else {
                     conn.prepareStatement(String.format(
                             "INSERT INTO Game (GameID, WhiteUsername, BlackUsername, GameName, GameObject) VALUES ('%d', '%s', '%s', '%s', '%s');",
                             newGame.gameID(),
-                            newGame.whiteUsername(),
-                            newGame.blackUsername(),
-                            newGame.gameName(),
-                            gson.toJson(newGame.game()))
-                    ).executeUpdate();
+                            escapeApostrophes(newGame.whiteUsername()),
+                            escapeApostrophes(newGame.blackUsername()),
+                            escapeApostrophes(newGame.gameName()),
+                            escapeApostrophes(gson.toJson(newGame.game())))).executeUpdate();
                 }
             }
         } catch (SQLException e) {
@@ -82,8 +81,12 @@ public class SQLGameDAO implements GameDAO {
      * @return object of game data by game ID or null if game ID does not exist
      *
      * @param gameID the gameID of the requested data
+     * @throws DataAccessException if game ID is null
      */
     public GameData getGame(Integer gameID) throws DataAccessException {
+        if (gameID == null) {
+            throw new DataAccessException("Unable to get game data: Game ID cannot be null.");
+        }
         Gson gson = new Gson();
         try (Connection conn = DatabaseManager.getConnection()) {
             ResultSet results = conn.prepareStatement(
@@ -130,9 +133,12 @@ public class SQLGameDAO implements GameDAO {
      * Replaces an object of game data in the database by game ID
      *
      * @param newGame the new game data object to replace the existing one
-     * @throws DataAccessException if game ID does not exist
+     * @throws DataAccessException if game ID is null or does not exist
      */
     public void updateGame(GameData newGame) throws DataAccessException {
+        if (getGame(newGame.gameID()) == null) {
+            throw new DataAccessException("Unable to update game data: Game ID not found.");
+        }
         try (Connection conn = DatabaseManager.getConnection()) {
             conn.prepareStatement(
                     String.format("DELETE FROM Game WHERE GameID=%d;", newGame.gameID())
@@ -152,5 +158,16 @@ public class SQLGameDAO implements GameDAO {
         } catch (SQLException e) {
             throw new DataAccessException("Unable to clear game table: " + e);
         }
+    }
+
+    private String escapeApostrophes(String str) {
+        String result = str;
+        for (int i = 0; i < result.length(); i++) {
+            if (result.charAt(i) == '\'') {
+                result = result.substring(0, i) + "'" + result.substring(i);
+                i++;
+            }
+        }
+        return result;
     }
 }

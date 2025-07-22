@@ -33,10 +33,10 @@ public class MemoryGameDAO implements GameDAO {
      * @throws DataAccessException if game ID is null
      */
     public GameData getGame(Integer gameID) throws DataAccessException {
+        if (gameID == null) {
+            throw new DataAccessException("Unable to get game data: Game ID cannot be null.");
+        }
         for (GameData g : gameDatabase) {
-            if (gameID == null) {
-                throw new DataAccessException("Unable to get game data: Game ID cannot be null.");
-            }
             if (g.gameID().equals(gameID)) {
                 return g;
             }
