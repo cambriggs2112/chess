@@ -24,8 +24,8 @@ public class ListGamesService {
         ArrayList<GameData> gameList;
         ArrayList<ListGamesResultElement> result = new ArrayList<ListGamesResultElement>();
         try {
-            MemoryAuthDAO auth = new MemoryAuthDAO();
-            MemoryGameDAO game = new MemoryGameDAO();
+            SQLAuthDAO auth = new SQLAuthDAO();
+            SQLGameDAO game = new SQLGameDAO();
             if (request.authToken() == null || auth.getAuth(request.authToken()) == null) {
                 throw new ServiceException("ERROR: Unauthorized: Unknown authorization token provided whilst attempting to list games.", 401);
             }

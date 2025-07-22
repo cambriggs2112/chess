@@ -7,23 +7,23 @@ import org.junit.jupiter.api.*;
 import java.util.ArrayList;
 
 public class ServiceTests {
-    private static MemoryAuthDAO auths;
-    private static MemoryGameDAO games;
-    private static MemoryUserDAO users;
+    private static SQLAuthDAO auths;
+    private static SQLGameDAO games;
+    private static SQLUserDAO users;
     private static UserData existingUser;
     private static GameData existingGame;
     private static AuthData existingAuth;
 
     @BeforeEach
     public void setupDAOs() {
-        auths = new MemoryAuthDAO();
-        games = new MemoryGameDAO();
-        users = new MemoryUserDAO();
-        // Add existing data to databases (assume a user registered, created a game, and joined as white)
-        existingAuth = new AuthData("9ddacd1c-778b-9a6c-468f-bf7bc268b967", "user");
-        existingGame = new GameData(1234, "user", null, "game", new ChessGame());
-        existingUser = new UserData("user", "pass", "user@gmail.com");
         try {
+            auths = new SQLAuthDAO();
+            games = new SQLGameDAO();
+            users = new SQLUserDAO();
+            // Add existing data to databases (assume a user registered, created a game, and joined as white)
+            existingAuth = new AuthData("9ddacd1c-778b-9a6c-468f-bf7bc268b967", "user");
+            existingGame = new GameData(1234, "user", null, "game", new ChessGame());
+            existingUser = new UserData("user", "pass", "user@gmail.com");
             auths.clear();
             games.clear();
             users.clear();

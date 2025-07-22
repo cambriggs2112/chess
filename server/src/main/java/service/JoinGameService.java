@@ -39,8 +39,8 @@ public class JoinGameService {
             throw new ServiceException("ERROR: Bad Request: Invalid game ID provided whilst attempting to join game.", 400);
         }
         try {
-            MemoryAuthDAO auth = new MemoryAuthDAO();
-            MemoryGameDAO game = new MemoryGameDAO();
+            SQLAuthDAO auth = new SQLAuthDAO();
+            SQLGameDAO game = new SQLGameDAO();
             AuthData thisAuth = auth.getAuth(request.authToken());
             if (thisAuth == null) {
                 throw new ServiceException("ERROR: Unauthorized: Unknown authorization token provided whilst attempting to join game.", 401);

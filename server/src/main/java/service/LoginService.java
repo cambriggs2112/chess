@@ -33,8 +33,8 @@ public class LoginService {
             throw new ServiceException("ERROR: Bad Request: Password is required to login.", 400);
         }
         try {
-            MemoryAuthDAO auth = new MemoryAuthDAO();
-            MemoryUserDAO user = new MemoryUserDAO();
+            SQLAuthDAO auth = new SQLAuthDAO();
+            SQLUserDAO user = new SQLUserDAO();
             UserData thisUser = user.getUser(request.username());
             if (thisUser == null) {
                 throw new ServiceException("ERROR: Unauthorized: Incorrect username provided whilst attempting to login.", 401);

@@ -21,7 +21,7 @@ public class LogoutService {
      */
     public LogoutResult logout(LogoutRequest request) throws ServiceException {
         try {
-            MemoryAuthDAO auth = new MemoryAuthDAO();
+            SQLAuthDAO auth = new SQLAuthDAO();
             if (request.authToken() == null || auth.getAuth(request.authToken()) == null) {
                 throw new ServiceException("ERROR: Unauthorized: Unknown authorization token provided whilst attempting to logout.", 401);
             }

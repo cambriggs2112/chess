@@ -31,8 +31,8 @@ public class CreateGameService {
             throw new ServiceException("ERROR: Bad Request: Game name is required to create game.", 400);
         }
         try {
-            MemoryAuthDAO auth = new MemoryAuthDAO();
-            MemoryGameDAO game = new MemoryGameDAO();
+            SQLAuthDAO auth = new SQLAuthDAO();
+            SQLGameDAO game = new SQLGameDAO();
             if (request.authToken() == null || auth.getAuth(request.authToken()) == null) {
                 throw new ServiceException("ERROR: Unauthorized: Unknown authorization token provided whilst attempting to create game.", 401);
             }

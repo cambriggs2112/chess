@@ -20,9 +20,9 @@ public class ClearApplicationService {
      */
     public ClearApplicationResult clearApplication(ClearApplicationRequest request) throws ServiceException {
         try {
-            MemoryAuthDAO auth = new MemoryAuthDAO();
-            MemoryGameDAO game = new MemoryGameDAO();
-            MemoryUserDAO user = new MemoryUserDAO();
+            SQLAuthDAO auth = new SQLAuthDAO();
+            SQLGameDAO game = new SQLGameDAO();
+            SQLUserDAO user = new SQLUserDAO();
             auth.clear();
             game.clear();
             user.clear();

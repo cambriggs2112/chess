@@ -37,8 +37,8 @@ public class RegisterService {
             throw new ServiceException("ERROR: Bad Request: Email is required to register.", 400);
         }
         try {
-            MemoryAuthDAO auth = new MemoryAuthDAO();
-            MemoryUserDAO user = new MemoryUserDAO();
+            SQLAuthDAO auth = new SQLAuthDAO();
+            SQLUserDAO user = new SQLUserDAO();
             if (user.getUser(request.username()) != null) {
                 throw new ServiceException("ERROR: Forbidden: Unable to register since provided username is already taken.", 403);
             }
