@@ -44,32 +44,32 @@ public class SQLGameDAO implements GameDAO {
                     conn.prepareStatement(String.format(
                             "INSERT INTO Game (GameID, GameName, GameObject) VALUES ('%d', '%s', '%s');",
                             newGame.gameID(),
-                            escapeApostrophes(newGame.gameName()),
-                            escapeApostrophes(gson.toJson(newGame.game())))).executeUpdate();
+                            EscapeCorrection.escapeApostrophes(newGame.gameName()),
+                            EscapeCorrection.escapeApostrophes(gson.toJson(newGame.game())))).executeUpdate();
                 } else {
                     conn.prepareStatement(String.format(
                             "INSERT INTO Game (GameID, BlackUsername, GameName, GameObject) VALUES ('%d', '%s', '%s', '%s');",
                             newGame.gameID(),
-                            escapeApostrophes(newGame.blackUsername()),
-                            escapeApostrophes(newGame.gameName()),
-                            escapeApostrophes(gson.toJson(newGame.game())))).executeUpdate();
+                            EscapeCorrection.escapeApostrophes(newGame.blackUsername()),
+                            EscapeCorrection.escapeApostrophes(newGame.gameName()),
+                            EscapeCorrection.escapeApostrophes(gson.toJson(newGame.game())))).executeUpdate();
                 }
             } else {
                 if (newGame.blackUsername() == null) {
                     conn.prepareStatement(String.format(
                             "INSERT INTO Game (GameID, WhiteUsername, GameName, GameObject) VALUES ('%d', '%s', '%s', '%s');",
                             newGame.gameID(),
-                            escapeApostrophes(newGame.whiteUsername()),
-                            escapeApostrophes(newGame.gameName()),
-                            escapeApostrophes(gson.toJson(newGame.game())))).executeUpdate();
+                            EscapeCorrection.escapeApostrophes(newGame.whiteUsername()),
+                            EscapeCorrection.escapeApostrophes(newGame.gameName()),
+                            EscapeCorrection.escapeApostrophes(gson.toJson(newGame.game())))).executeUpdate();
                 } else {
                     conn.prepareStatement(String.format(
                             "INSERT INTO Game (GameID, WhiteUsername, BlackUsername, GameName, GameObject) VALUES ('%d', '%s', '%s', '%s', '%s');",
                             newGame.gameID(),
-                            escapeApostrophes(newGame.whiteUsername()),
-                            escapeApostrophes(newGame.blackUsername()),
-                            escapeApostrophes(newGame.gameName()),
-                            escapeApostrophes(gson.toJson(newGame.game())))).executeUpdate();
+                            EscapeCorrection.escapeApostrophes(newGame.whiteUsername()),
+                            EscapeCorrection.escapeApostrophes(newGame.blackUsername()),
+                            EscapeCorrection.escapeApostrophes(newGame.gameName()),
+                            EscapeCorrection.escapeApostrophes(gson.toJson(newGame.game())))).executeUpdate();
                 }
             }
         } catch (SQLException e) {
@@ -158,16 +158,5 @@ public class SQLGameDAO implements GameDAO {
         } catch (SQLException e) {
             throw new DataAccessException("Unable to clear game table: " + e);
         }
-    }
-
-    private String escapeApostrophes(String str) {
-        String result = str;
-        for (int i = 0; i < result.length(); i++) {
-            if (result.charAt(i) == '\'') {
-                result = result.substring(0, i) + "'" + result.substring(i);
-                i++;
-            }
-        }
-        return result;
     }
 }

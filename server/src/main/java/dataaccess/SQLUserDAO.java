@@ -38,9 +38,9 @@ public class SQLUserDAO implements UserDAO {
         try (Connection conn = DatabaseManager.getConnection()) {
             conn.prepareStatement(
                     String.format("INSERT INTO User (Username, Password, Email) VALUES ('%s', '%s', '%s');",
-                            escapeApostrophes(newUser.username()),
-                            escapeApostrophes(newUser.password()),
-                            escapeApostrophes(newUser.email()))).executeUpdate();
+                            EscapeCorrection.escapeApostrophes(newUser.username()),
+                            EscapeCorrection.escapeApostrophes(newUser.password()),
+                            EscapeCorrection.escapeApostrophes(newUser.email()))).executeUpdate();
         } catch (SQLException e) {
             throw new DataAccessException("Unable to create user data: " + e);
         }
@@ -59,7 +59,7 @@ public class SQLUserDAO implements UserDAO {
         try (Connection conn = DatabaseManager.getConnection()) {
             ResultSet results = conn.prepareStatement(
                     String.format("SELECT * FROM User WHERE Username='%s';",
-                            escapeApostrophes(username))
+                            EscapeCorrection.escapeApostrophes(username))
             ).executeQuery();
             if (results.next()) { // detect if an object is in the set
                 return new UserData(username, results.getString("Password"), results.getString("Email"));
@@ -99,16 +99,5 @@ public class SQLUserDAO implements UserDAO {
         } catch (SQLException e) {
             throw new DataAccessException("Unable to clear user table: " + e);
         }
-    }
-
-    private String escapeApostrophes(String str) {
-        String result = str;
-        for (int i = 0; i < result.length(); i++) {
-            if (result.charAt(i) == '\'') {
-                result = result.substring(0, i) + "'" + result.substring(i);
-                i++;
-            }
-        }
-        return result;
     }
 }

@@ -35,8 +35,8 @@ public class SQLAuthDAO implements AuthDAO {
         try (Connection conn = DatabaseManager.getConnection()) {
             conn.prepareStatement(
                     String.format("INSERT INTO Auth (AuthToken, Username) VALUES ('%s', '%s');",
-                            escapeApostrophes(newAuth.authToken()),
-                            escapeApostrophes(newAuth.username()))
+                            EscapeCorrection.escapeApostrophes(newAuth.authToken()),
+                            EscapeCorrection.escapeApostrophes(newAuth.username()))
             ).executeUpdate();
         } catch (SQLException e) {
             throw new DataAccessException("Unable to create authorization data: " + e);
@@ -57,7 +57,7 @@ public class SQLAuthDAO implements AuthDAO {
         try (Connection conn = DatabaseManager.getConnection()) {
             ResultSet results = conn.prepareStatement(
                     String.format("SELECT * FROM Auth WHERE AuthToken='%s';",
-                            escapeApostrophes(authToken))).executeQuery();
+                            EscapeCorrection.escapeApostrophes(authToken))).executeQuery();
             if (results.next()) { // detect if an object is in the set
                 return new AuthData(authToken, results.getString("Username"));
             } else {
@@ -99,7 +99,7 @@ public class SQLAuthDAO implements AuthDAO {
         try (Connection conn = DatabaseManager.getConnection()) {
             conn.prepareStatement(
                     String.format("DELETE FROM Auth WHERE AuthToken='%s';",
-                            escapeApostrophes(authToken))).executeUpdate();
+                            EscapeCorrection.escapeApostrophes(authToken))).executeUpdate();
         } catch (SQLException e) {
             throw new DataAccessException("Unable to delete authorization data: " + e);
         }
@@ -114,16 +114,5 @@ public class SQLAuthDAO implements AuthDAO {
         } catch (SQLException e) {
             throw new DataAccessException("Unable to clear authorization table: " + e);
         }
-    }
-
-    private String escapeApostrophes(String str) {
-        String result = str;
-        for (int i = 0; i < result.length(); i++) {
-            if (result.charAt(i) == '\'') {
-                result = result.substring(0, i) + "'" + result.substring(i);
-                i++;
-            }
-        }
-        return result;
     }
 }
