@@ -3,7 +3,7 @@ package service;
 import java.util.ArrayList;
 
 import dataaccess.*;
-import model.GameData;
+import model.*;
 
 /**
  * A service that lists games to authenticated users.
@@ -11,9 +11,6 @@ import model.GameData;
  * game name.
  */
 public class ListGamesService {
-    public record ListGamesRequest(String authToken) {}
-    public record ListGamesResult(ArrayList<ListGamesResultElement> games) {}
-    public record ListGamesResultElement(Integer gameID, String whiteUsername, String blackUsername, String gameName) {}
 
     public ListGamesService() {}
 

@@ -10,8 +10,6 @@ import model.*;
  * Users are not allowed to join occupied teams.
  */
 public class JoinGameService {
-    public record JoinGameRequest(String authToken, ChessGame.TeamColor playerColor, Integer gameID) {}
-    public record JoinGameResult() {}
 
     public JoinGameService() {}
 

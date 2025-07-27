@@ -1,7 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
-import dataaccess.DataAccessException;
+import model.*;
 import service.*;
 import spark.Request;
 import spark.Response;
@@ -22,9 +22,9 @@ public class ClearApplicationHandler {
     public Object handleRequest(Request request, Response response) {
         Gson gson = new Gson();
         ClearApplicationService service = new ClearApplicationService();
-        ClearApplicationService.ClearApplicationRequest req = gson.fromJson(request.body(), ClearApplicationService.ClearApplicationRequest.class);
+        ClearApplicationRequest req = gson.fromJson(request.body(), ClearApplicationRequest.class);
         try {
-            ClearApplicationService.ClearApplicationResult res = service.clearApplication(req);
+            ClearApplicationResult res = service.clearApplication(req);
             response.status(200);
             return gson.toJson(res);
         } catch (ServiceException e) {

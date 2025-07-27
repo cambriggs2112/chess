@@ -1,13 +1,12 @@
 package service;
 
 import dataaccess.*;
+import model.*;
 
 /**
  * A service that logs authenticated users out.
  */
 public class LogoutService {
-    public record LogoutRequest(String authToken) {}
-    public record LogoutResult() {}
 
     public LogoutService() {}
 

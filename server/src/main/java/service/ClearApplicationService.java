@@ -1,13 +1,12 @@
 package service;
 
 import dataaccess.*;
+import model.*;
 
 /**
  * A service that clears the application.
  */
 public class ClearApplicationService {
-    public record ClearApplicationRequest() {}
-    public record ClearApplicationResult() {}
 
     public ClearApplicationService() {}
 

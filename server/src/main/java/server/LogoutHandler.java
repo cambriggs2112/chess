@@ -1,6 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
+import model.*;
 import service.*;
 import spark.Request;
 import spark.Response;
@@ -22,9 +23,9 @@ public class LogoutHandler {
         Gson gson = new Gson();
         LogoutService service = new LogoutService();
         String authToken = request.headers("authorization");
-        LogoutService.LogoutRequest req = new LogoutService.LogoutRequest(authToken);
+        LogoutRequest req = new LogoutRequest(authToken);
         try {
-            LogoutService.LogoutResult res = service.logout(req);
+            LogoutResult res = service.logout(req);
             response.status(200);
             return gson.toJson(res);
         } catch (ServiceException e) {

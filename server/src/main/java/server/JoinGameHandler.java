@@ -1,6 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
+import model.*;
 import service.*;
 import spark.Request;
 import spark.Response;
@@ -21,11 +22,11 @@ public class JoinGameHandler {
     public Object handleRequest(Request request, Response response) {
         Gson gson = new Gson();
         JoinGameService service = new JoinGameService();
-        JoinGameService.JoinGameRequest req = gson.fromJson(request.body(), JoinGameService.JoinGameRequest.class);
+        JoinGameRequest req = gson.fromJson(request.body(), JoinGameRequest.class);
         String authToken = request.headers("authorization");
-        req = new JoinGameService.JoinGameRequest(authToken, req.playerColor(), req.gameID());
+        req = new JoinGameRequest(authToken, req.playerColor(), req.gameID());
         try {
-            JoinGameService.JoinGameResult res = service.joinGame(req);
+            JoinGameResult res = service.joinGame(req);
             response.status(200);
             return gson.toJson(res);
         } catch (ServiceException e) {

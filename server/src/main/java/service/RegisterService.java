@@ -11,8 +11,6 @@ import java.util.UUID;
  * An authorization token is obtained to automatically log the user in.
  */
 public class RegisterService {
-    public record RegisterRequest(String username, String password, String email) {}
-    public record RegisterResult(String username, String authToken) {}
 
     public RegisterService() {}
 

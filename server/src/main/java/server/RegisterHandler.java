@@ -1,6 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
+import model.*;
 import service.*;
 import spark.Request;
 import spark.Response;
@@ -21,9 +22,9 @@ public class RegisterHandler {
     public Object handleRequest(Request request, Response response) {
         Gson gson = new Gson();
         RegisterService service = new RegisterService();
-        RegisterService.RegisterRequest req = gson.fromJson(request.body(), RegisterService.RegisterRequest.class);
+        RegisterRequest req = gson.fromJson(request.body(), RegisterRequest.class);
         try {
-            RegisterService.RegisterResult res = service.register(req);
+            RegisterResult res = service.register(req);
             response.status(200);
             return gson.toJson(res);
         } catch (ServiceException e) {

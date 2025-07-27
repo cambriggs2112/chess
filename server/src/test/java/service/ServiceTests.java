@@ -60,7 +60,7 @@ public class ServiceTests {
     @Test
     public void clearApplicationOnce() {
         ClearApplicationService service = new ClearApplicationService();
-        ClearApplicationService.ClearApplicationRequest req = new ClearApplicationService.ClearApplicationRequest();
+        ClearApplicationRequest req = new ClearApplicationRequest();
         try {
             service.clearApplication(req);
             checkEmptyDatabase();
@@ -72,7 +72,7 @@ public class ServiceTests {
     @Test
     public void clearApplicationTwice() {
         ClearApplicationService service = new ClearApplicationService();
-        ClearApplicationService.ClearApplicationRequest req = new ClearApplicationService.ClearApplicationRequest();
+        ClearApplicationRequest req = new ClearApplicationRequest();
         try {
             service.clearApplication(req);
             service.clearApplication(req);
@@ -85,9 +85,9 @@ public class ServiceTests {
     @Test
     public void createGameNormally() {
         CreateGameService service = new CreateGameService();
-        CreateGameService.CreateGameRequest req = new CreateGameService.CreateGameRequest(
+        CreateGameRequest req = new CreateGameRequest(
                 existingAuth.authToken(), "chess");
-        CreateGameService.CreateGameResult res = null;
+        CreateGameResult res = null;
         try {
             res = service.createGame(req);
         } catch (ServiceException e) {
@@ -110,7 +110,7 @@ public class ServiceTests {
     @Test
     public void createGameWithoutAuth() {
         CreateGameService service = new CreateGameService();
-        CreateGameService.CreateGameRequest req = new CreateGameService.CreateGameRequest(
+        CreateGameRequest req = new CreateGameRequest(
                 "incorrect-auth-token", "chess");
         try {
             service.createGame(req);
@@ -131,7 +131,7 @@ public class ServiceTests {
     @Test
     public void joinGameNormally() { // Note: WHITE is taken.
         JoinGameService service = new JoinGameService();
-        JoinGameService.JoinGameRequest req = new JoinGameService.JoinGameRequest(
+        JoinGameRequest req = new JoinGameRequest(
                 existingAuth.authToken(), ChessGame.TeamColor.BLACK, existingGame.gameID());
         try {
             service.joinGame(req);
@@ -157,7 +157,7 @@ public class ServiceTests {
     @Test
     public void joinGameAsWhite() { // Note: WHITE is taken.
         JoinGameService service = new JoinGameService();
-        JoinGameService.JoinGameRequest req = new JoinGameService.JoinGameRequest(
+        JoinGameRequest req = new JoinGameRequest(
                 existingAuth.authToken(), ChessGame.TeamColor.WHITE, existingGame.gameID());
         try {
             service.joinGame(req);
@@ -183,9 +183,9 @@ public class ServiceTests {
     @Test
     public void listGamesNormally() {
         ListGamesService service = new ListGamesService();
-        ListGamesService.ListGamesRequest req = new ListGamesService.ListGamesRequest(
+        ListGamesRequest req = new ListGamesRequest(
                 existingAuth.authToken());
-        ListGamesService.ListGamesResult res = null;
+        ListGamesResult res = null;
         try {
             res = service.listGames(req);
         } catch (ServiceException e) {
@@ -193,7 +193,7 @@ public class ServiceTests {
         }
         Assertions.assertNotNull(res,
                 "Result object should not be null.");
-        ArrayList<ListGamesService.ListGamesResultElement> gamesList = res.games();
+        ArrayList<ListGamesResultElement> gamesList = res.games();
         Assertions.assertNotNull(gamesList,
                 "Result list should not be null.");
         Assertions.assertEquals(1, gamesList.size(),
@@ -213,7 +213,7 @@ public class ServiceTests {
     @Test
     public void listGamesWithoutAuth() {
         ListGamesService service = new ListGamesService();
-        ListGamesService.ListGamesRequest req = new ListGamesService.ListGamesRequest(
+        ListGamesRequest req = new ListGamesRequest(
                 "incorrect-auth-token");
         try {
             service.listGames(req);
@@ -226,9 +226,9 @@ public class ServiceTests {
     @Test
     public void loginNormally() {
         LoginService service = new LoginService();
-        LoginService.LoginRequest req = new LoginService.LoginRequest(
+        LoginRequest req = new LoginRequest(
                 existingUser.username(), "pass"); // existingUser.password() is the hashed equivalent
-        LoginService.LoginResult res = null;
+        LoginResult res = null;
         try {
             res = service.login(req);
         } catch (ServiceException e) {
@@ -255,7 +255,7 @@ public class ServiceTests {
     @Test
     public void loginIncorrectPassword() {
         LoginService service = new LoginService();
-        LoginService.LoginRequest req = new LoginService.LoginRequest(
+        LoginRequest req = new LoginRequest(
                 existingUser.username(), "incorrect-password");
         try {
             service.login(req);
@@ -276,7 +276,7 @@ public class ServiceTests {
     @Test
     public void logoutNormally() {
         LogoutService service = new LogoutService();
-        LogoutService.LogoutRequest req = new LogoutService.LogoutRequest(
+        LogoutRequest req = new LogoutRequest(
                 existingAuth.authToken());
         try {
             service.logout(req);
@@ -296,7 +296,7 @@ public class ServiceTests {
     @Test
     public void logoutWithoutAuth() {
         LogoutService service = new LogoutService();
-        LogoutService.LogoutRequest req = new LogoutService.LogoutRequest(
+        LogoutRequest req = new LogoutRequest(
                 "incorrect-auth-token");
         try {
             service.logout(req);
@@ -317,9 +317,9 @@ public class ServiceTests {
     @Test
     public void registerNormally() {
         RegisterService service = new RegisterService();
-        RegisterService.RegisterRequest req = new RegisterService.RegisterRequest(
+        RegisterRequest req = new RegisterRequest(
                 "user2", "pass2", "email2@outlook.com()");
-        RegisterService.RegisterResult res = null;
+        RegisterResult res = null;
         try {
             res = service.register(req);
         } catch (ServiceException e) {
@@ -350,7 +350,7 @@ public class ServiceTests {
     @Test
     public void registerTakenUsername() {
         RegisterService service = new RegisterService();
-        RegisterService.RegisterRequest req = new RegisterService.RegisterRequest(
+        RegisterRequest req = new RegisterRequest(
                 existingUser.username(), "pass2", "email2@outlook.com()");
         try {
             service.register(req);

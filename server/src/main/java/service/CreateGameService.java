@@ -2,7 +2,7 @@ package service;
 
 import chess.ChessGame;
 import dataaccess.*;
-import model.GameData;
+import model.*;
 import java.util.UUID;
 
 /**
@@ -10,8 +10,6 @@ import java.util.UUID;
  * A name is provided by an authenticated user to create a game with a unique game ID.
  */
 public class CreateGameService {
-    public record CreateGameRequest(String authToken, String gameName) {}
-    public record CreateGameResult(Integer gameID) {}
 
     public CreateGameService() {}
 

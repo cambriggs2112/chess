@@ -1,6 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
+import model.*;
 import service.*;
 import spark.Request;
 import spark.Response;
@@ -21,9 +22,9 @@ public class LoginHandler {
     public Object handleRequest(Request request, Response response) {
         Gson gson = new Gson();
         LoginService service = new LoginService();
-        LoginService.LoginRequest req = gson.fromJson(request.body(), LoginService.LoginRequest.class);
+        LoginRequest req = gson.fromJson(request.body(), LoginRequest.class);
         try {
-            LoginService.LoginResult res = service.login(req);
+            LoginResult res = service.login(req);
             response.status(200);
             return gson.toJson(res);
         } catch (ServiceException e) {

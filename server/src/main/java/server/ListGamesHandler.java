@@ -1,6 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
+import model.*;
 import service.*;
 import spark.Request;
 import spark.Response;
@@ -22,9 +23,9 @@ public class ListGamesHandler {
         Gson gson = new Gson();
         ListGamesService service = new ListGamesService();
         String authToken = request.headers("authorization");
-        ListGamesService.ListGamesRequest req = new ListGamesService.ListGamesRequest(authToken);
+        ListGamesRequest req = new ListGamesRequest(authToken);
         try {
-            ListGamesService.ListGamesResult res = service.listGames(req);
+            ListGamesResult res = service.listGames(req);
             response.status(200);
             return gson.toJson(res);
         } catch (ServiceException e) {

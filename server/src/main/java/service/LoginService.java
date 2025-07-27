@@ -10,8 +10,6 @@ import java.util.UUID;
  * A username and password are provided by the user, and if both are correct, an authorization token is obtained.
  */
 public class LoginService {
-    public record LoginRequest(String username, String password) {}
-    public record LoginResult(String username, String authToken) {}
 
     public LoginService() {}
 
