@@ -1,4 +1,4 @@
-package service;
+package model;
 
 /**
  * Indicates there was an error in a service that warrants a non-200 HTTP code
