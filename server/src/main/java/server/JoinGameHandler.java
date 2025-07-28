@@ -30,7 +30,7 @@ public class JoinGameHandler {
             response.status(200);
             return gson.toJson(res);
         } catch (ServiceException e) {
-            ErrorResult err = new ErrorResult(e.toString());
+            ErrorResult err = new ErrorResult(e.getMessage());
             response.status(e.getHTTPCode());
             return gson.toJson(err);
         }

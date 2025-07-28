@@ -55,22 +55,18 @@ public class ServerFacade {
                 }
             }
             http.connect();
-            System.out.println("test");
             int httpCode = http.getResponseCode();
-            System.out.println("test");
-            try (InputStream in = http.getInputStream()) {
-                System.out.println("test");
-                if (httpCode != 200) {
-                    System.out.println("test");
-                    ErrorResult res = gson.fromJson(new InputStreamReader(in), ErrorResult.class);
-                    System.out.println("test");
-                    throw new ServiceException(res.message(), httpCode);
+            if (httpCode == 200) {
+                try (InputStream in = http.getInputStream()) {
+                    return gson.fromJson(new InputStreamReader(in), resultClass);
                 }
-                System.out.println("test");
-                return gson.fromJson(new InputStreamReader(in), resultClass);
+            }
+            try (InputStream in = http.getErrorStream()) {
+                ErrorResult res = gson.fromJson(new InputStreamReader(in), ErrorResult.class);
+                throw new ServiceException(res.message(), httpCode);
             }
         } catch (URISyntaxException | IOException e) {
-            throw new ServiceException(e.toString(), 500);
+            throw new ServiceException(e.getMessage(), 500);
         }
     }
 }

@@ -57,7 +57,7 @@ public class JoinGameService {
             }
             game.updateGame(newGame);
         } catch (DataAccessException e) {
-            throw new ServiceException("ERROR: Internal Server Error occurred whilst attempting to join game: " + e, 500);
+            throw new ServiceException("ERROR: Internal Server Error occurred whilst attempting to join game: " + e.getMessage(), 500);
         }
         return new JoinGameResult();
     }

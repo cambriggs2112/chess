@@ -21,7 +21,7 @@ public class SQLUserDAO implements UserDAO {
                     );
                     """).executeUpdate(); // Password is hashed in code that uses this DAO
         } catch (SQLException e) {
-            throw new DataAccessException("Unable to create user table: " + e);
+            throw new DataAccessException("Unable to create user table: " + e.getMessage());
         }
     }
 
@@ -42,7 +42,7 @@ public class SQLUserDAO implements UserDAO {
                             EscapeCorrection.escapeApostrophes(newUser.password()),
                             EscapeCorrection.escapeApostrophes(newUser.email()))).executeUpdate();
         } catch (SQLException e) {
-            throw new DataAccessException("Unable to create user data: " + e);
+            throw new DataAccessException("Unable to create user data: " + e.getMessage());
         }
     }
 
@@ -67,7 +67,7 @@ public class SQLUserDAO implements UserDAO {
                 return null;
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Unable to get user data: " + e);
+            throw new DataAccessException("Unable to get user data: " + e.getMessage());
         }
     }
 
@@ -85,7 +85,7 @@ public class SQLUserDAO implements UserDAO {
                         results.getString("Email")));
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Unable to list user data: " + e);
+            throw new DataAccessException("Unable to list user data: " + e.getMessage());
         }
         return resultList;
     }
@@ -97,7 +97,7 @@ public class SQLUserDAO implements UserDAO {
         try (Connection conn = DatabaseManager.getConnection()) {
             conn.prepareStatement("TRUNCATE User;").executeUpdate();
         } catch (SQLException e) {
-            throw new DataAccessException("Unable to clear user table: " + e);
+            throw new DataAccessException("Unable to clear user table: " + e.getMessage());
         }
     }
 }

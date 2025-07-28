@@ -47,7 +47,7 @@ public class LoginService {
             AuthData newAuth = new AuthData(authToken, request.username());
             auth.createAuth(newAuth);
         } catch (DataAccessException e) {
-            throw new ServiceException("ERROR: Internal Server Error occurred whilst attempting to login: " + e, 500);
+            throw new ServiceException("ERROR: Internal Server Error occurred whilst attempting to login: " + e.getMessage(), 500);
         }
         return new LoginResult(request.username(), authToken);
     }

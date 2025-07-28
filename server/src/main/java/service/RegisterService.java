@@ -49,7 +49,7 @@ public class RegisterService {
             AuthData newAuth = new AuthData(authToken, request.username());
             auth.createAuth(newAuth);
         } catch (DataAccessException e) {
-            throw new ServiceException("ERROR: Internal Server Error occurred whilst attempting to register: " + e, 500);
+            throw new ServiceException("ERROR: Internal Server Error occurred whilst attempting to register: " + e.getMessage(), 500);
         }
         return new RegisterResult(request.username(), authToken);
     }

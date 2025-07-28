@@ -26,7 +26,7 @@ public class LogoutService {
             }
             auth.deleteAuth(request.authToken());
         } catch (DataAccessException e) {
-            throw new ServiceException("ERROR: Internal Server Error occurred whilst attempting to logout: " + e, 500);
+            throw new ServiceException("ERROR: Internal Server Error occurred whilst attempting to logout: " + e.getMessage(), 500);
         }
         return new LogoutResult();
     }

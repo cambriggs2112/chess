@@ -18,7 +18,7 @@ public class SQLAuthDAO implements AuthDAO {
                     );
                     """).executeUpdate();
         } catch (SQLException e) {
-            throw new DataAccessException("Unable to create authorization table: " + e);
+            throw new DataAccessException("Unable to create authorization table: " + e.getMessage());
         }
     }
 
@@ -39,7 +39,7 @@ public class SQLAuthDAO implements AuthDAO {
                             EscapeCorrection.escapeApostrophes(newAuth.username()))
             ).executeUpdate();
         } catch (SQLException e) {
-            throw new DataAccessException("Unable to create authorization data: " + e);
+            throw new DataAccessException("Unable to create authorization data: " + e.getMessage());
         }
     }
 
@@ -64,7 +64,7 @@ public class SQLAuthDAO implements AuthDAO {
                 return null;
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Unable to get authorization data: " + e);
+            throw new DataAccessException("Unable to get authorization data: " + e.getMessage());
         }
     }
 
@@ -81,7 +81,7 @@ public class SQLAuthDAO implements AuthDAO {
                         results.getString("Username")));
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Unable to list authorization data: " + e);
+            throw new DataAccessException("Unable to list authorization data: " + e.getMessage());
         }
         return resultList;
     }
@@ -101,7 +101,7 @@ public class SQLAuthDAO implements AuthDAO {
                     String.format("DELETE FROM Auth WHERE AuthToken='%s';",
                             EscapeCorrection.escapeApostrophes(authToken))).executeUpdate();
         } catch (SQLException e) {
-            throw new DataAccessException("Unable to delete authorization data: " + e);
+            throw new DataAccessException("Unable to delete authorization data: " + e.getMessage());
         }
     }
 
@@ -112,7 +112,7 @@ public class SQLAuthDAO implements AuthDAO {
         try (Connection conn = DatabaseManager.getConnection()) {
             conn.prepareStatement("TRUNCATE Auth;").executeUpdate();
         } catch (SQLException e) {
-            throw new DataAccessException("Unable to clear authorization table: " + e);
+            throw new DataAccessException("Unable to clear authorization table: " + e.getMessage());
         }
     }
 }

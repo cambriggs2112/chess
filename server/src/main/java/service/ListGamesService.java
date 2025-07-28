@@ -28,7 +28,7 @@ public class ListGamesService {
             }
             gameList = game.listGames();
         } catch (DataAccessException e) {
-            throw new ServiceException("ERROR: Internal Server Error occurred whilst attempting to list games: " + e, 500);
+            throw new ServiceException("ERROR: Internal Server Error occurred whilst attempting to list games: " + e.getMessage(), 500);
         }
         for (GameData thisGame : gameList) {
             result.add(new ListGamesResultElement(thisGame.gameID(), thisGame.whiteUsername(), thisGame.blackUsername(), thisGame.gameName()));

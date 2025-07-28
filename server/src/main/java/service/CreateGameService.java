@@ -40,7 +40,7 @@ public class CreateGameService {
             GameData newGame = new GameData(gameID, null, null, request.gameName(), new ChessGame());
             game.createGame(newGame);
         } catch (DataAccessException e) {
-            throw new ServiceException("ERROR: Internal Server Error occurred whilst attempting to create game: " + e, 500);
+            throw new ServiceException("ERROR: Internal Server Error occurred whilst attempting to create game: " + e.getMessage(), 500);
         }
         return new CreateGameResult(gameID);
     }

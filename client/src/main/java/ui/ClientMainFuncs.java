@@ -57,7 +57,7 @@ public class ClientMainFuncs {
             System.out.println("\u001b[38;5;46m  Logged in as " + res.username() + "\u001b[39m");
             return res.authToken();
         } catch (ServiceException e) {
-            System.out.println("\u001b[38;5;160m  " + e + "\u001b[39m");
+            System.out.println("\u001b[38;5;160m  " + e.getMessage() + "\u001b[39m");
             return null;
         }
     }

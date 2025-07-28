@@ -23,7 +23,7 @@ public class SQLGameDAO implements GameDAO {
                     );
                     """).executeUpdate(); // GameObject is JSON
         } catch (SQLException e) {
-            throw new DataAccessException("Unable to create game table: " + e);
+            throw new DataAccessException("Unable to create game table: " + e.getMessage());
         }
     }
 
@@ -73,7 +73,7 @@ public class SQLGameDAO implements GameDAO {
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Unable to create game data: " + e);
+            throw new DataAccessException("Unable to create game data: " + e.getMessage());
         }
     }
 
@@ -103,7 +103,7 @@ public class SQLGameDAO implements GameDAO {
                 return null;
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Unable to get game data: " + e);
+            throw new DataAccessException("Unable to get game data: " + e.getMessage());
         }
     }
 
@@ -124,7 +124,7 @@ public class SQLGameDAO implements GameDAO {
                         gson.fromJson(results.getString("GameObject"), ChessGame.class)));
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Unable to list game data: " + e);
+            throw new DataAccessException("Unable to list game data: " + e.getMessage());
         }
         return resultList;
     }
@@ -145,7 +145,7 @@ public class SQLGameDAO implements GameDAO {
             ).executeUpdate();
             createGame(newGame);
         } catch (SQLException e) {
-            throw new DataAccessException("Unable to update game data: " + e);
+            throw new DataAccessException("Unable to update game data: " + e.getMessage());
         }
     }
 
@@ -156,7 +156,7 @@ public class SQLGameDAO implements GameDAO {
         try (Connection conn = DatabaseManager.getConnection()) {
             conn.prepareStatement("TRUNCATE Game;").executeUpdate();
         } catch (SQLException e) {
-            throw new DataAccessException("Unable to clear game table: " + e);
+            throw new DataAccessException("Unable to clear game table: " + e.getMessage());
         }
     }
 }
