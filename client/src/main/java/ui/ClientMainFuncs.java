@@ -25,6 +25,24 @@ public class ClientMainFuncs {
         return result;
     }
 
+    public static String login(ArrayList<String> arguments) {
+        if (arguments.size() != 3) {
+            System.out.println("\u001b[38;5;160m  Usage: login <USERNAME> <PASSWORD>\u001b[39m");
+            return null;
+        }
+        String username = arguments.get(1);
+        String password = arguments.get(2);
+        try {
+            ServerFacade sf = new ServerFacade(SERVER_URL);
+            LoginResult res = sf.login(new LoginRequest(username, password));
+            System.out.println("\u001b[38;5;46m  Logged in as " + res.username() + "\u001b[39m");
+            return res.authToken();
+        } catch (ServiceException e) {
+            System.out.println("\u001b[38;5;160m  " + e + "\u001b[39m");
+            return null;
+        }
+    }
+
     public static String register(ArrayList<String> arguments) {
         if (arguments.size() != 4) {
             System.out.println("\u001b[38;5;160m  Usage: register <USERNAME> <PASSWORD> <EMAIL>\u001b[39m");
@@ -36,7 +54,7 @@ public class ClientMainFuncs {
         try {
             ServerFacade sf = new ServerFacade(SERVER_URL);
             RegisterResult res = sf.register(new RegisterRequest(username, password, email));
-            System.out.println("  Logged in as " + res.username());
+            System.out.println("\u001b[38;5;46m  Logged in as " + res.username() + "\u001b[39m");
             return res.authToken();
         } catch (ServiceException e) {
             System.out.println("\u001b[38;5;160m  " + e + "\u001b[39m");

@@ -28,7 +28,7 @@ public class Main {
                 } else if (arguments.getFirst().equalsIgnoreCase("quit")) {
                     break;
                 } else if (arguments.getFirst().equalsIgnoreCase("login")) {
-                    break;
+                    authToken = ClientMainFuncs.login(arguments);
                 } else if (arguments.getFirst().equalsIgnoreCase("register")) {
                     authToken = ClientMainFuncs.register(arguments);
                 } else {
