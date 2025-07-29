@@ -3,8 +3,8 @@ package service;
 import chess.ChessGame;
 import dataaccess.*;
 import model.*;
-import model.Request.CreateGameRequest;
-import model.Result.CreateGameResult;
+import model.request.CreateGameRequest;
+import model.result.CreateGameResult;
 
 import java.util.UUID;
 

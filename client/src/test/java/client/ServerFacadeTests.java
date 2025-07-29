@@ -1,10 +1,10 @@
 package client;
 
-import model.Request.*;
-import model.Result.CreateGameResult;
-import model.Result.ListGamesResult;
-import model.Result.LoginResult;
-import model.Result.RegisterResult;
+import model.request.*;
+import model.result.CreateGameResult;
+import model.result.ListGamesResult;
+import model.result.LoginResult;
+import model.result.RegisterResult;
 import org.junit.jupiter.api.*;
 import server.Server;
 import ui.*;

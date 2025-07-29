@@ -2,8 +2,8 @@ package ui;
 
 import com.google.gson.Gson;
 import model.*;
-import model.Request.*;
-import model.Result.*;
+import model.request.*;
+import model.result.*;
 
 import java.io.*;
 import java.net.*;

@@ -3,8 +3,8 @@ package service;
 import chess.ChessGame;
 import dataaccess.*;
 import model.*;
-import model.Request.JoinGameRequest;
-import model.Result.JoinGameResult;
+import model.request.JoinGameRequest;
+import model.result.JoinGameResult;
 
 /**
  * A service that allows users to join games.

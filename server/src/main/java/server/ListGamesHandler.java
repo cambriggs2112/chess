@@ -2,8 +2,8 @@ package server;
 
 import com.google.gson.Gson;
 import model.*;
-import model.Request.ListGamesRequest;
-import model.Result.ListGamesResult;
+import model.request.ListGamesRequest;
+import model.result.ListGamesResult;
 import service.*;
 import spark.Request;
 import spark.Response;

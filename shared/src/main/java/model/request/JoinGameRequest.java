@@ -1,4 +1,4 @@
-package model.Request;
+package model.request;
 
 import chess.ChessGame;
 

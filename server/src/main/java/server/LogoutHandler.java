@@ -2,8 +2,8 @@ package server;
 
 import com.google.gson.Gson;
 import model.*;
-import model.Request.LogoutRequest;
-import model.Result.LogoutResult;
+import model.request.LogoutRequest;
+import model.result.LogoutResult;
 import service.*;
 import spark.Request;
 import spark.Response;

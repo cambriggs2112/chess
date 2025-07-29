@@ -1,3 +1,3 @@
-package model.Request;
+package model.request;
 
 public record ClearApplicationRequest() {}

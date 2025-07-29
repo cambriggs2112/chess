@@ -1,3 +1,3 @@
-package model.Result;
+package model.result;
 
 public record ClearApplicationResult() {}

@@ -2,8 +2,8 @@ package server;
 
 import com.google.gson.Gson;
 import model.*;
-import model.Request.ClearApplicationRequest;
-import model.Result.ClearApplicationResult;
+import model.request.ClearApplicationRequest;
+import model.result.ClearApplicationResult;
 import service.*;
 import spark.Request;
 import spark.Response;

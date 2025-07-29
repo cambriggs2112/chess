@@ -2,8 +2,8 @@ package service;
 
 import dataaccess.*;
 import model.*;
-import model.Request.ClearApplicationRequest;
-import model.Result.ClearApplicationResult;
+import model.request.ClearApplicationRequest;
+import model.result.ClearApplicationResult;
 
 /**
  * A service that clears the application.

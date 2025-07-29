@@ -2,8 +2,8 @@ package service;
 
 import dataaccess.*;
 import model.*;
-import model.Request.LogoutRequest;
-import model.Result.LogoutResult;
+import model.request.LogoutRequest;
+import model.result.LogoutResult;
 
 /**
  * A service that logs authenticated users out.
