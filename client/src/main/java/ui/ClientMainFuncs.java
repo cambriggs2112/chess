@@ -39,7 +39,7 @@ public class ClientMainFuncs {
         try {
             ServerFacade sf = new ServerFacade(SERVER_URL);
             LoginResult res = sf.login(new LoginRequest(username, password));
-            System.out.println("\u001b[38;5;46m  Logged in as " + res.username() + "\u001b[39m");
+            System.out.println("\u001b[38;5;12m  Logged in as " + res.username() + "\u001b[39m");
             return res.authToken();
         } catch (ServiceException e) {
             System.out.println("\u001b[38;5;160m  " + e.getMessage() + "\u001b[39m");
@@ -58,7 +58,7 @@ public class ClientMainFuncs {
         try {
             ServerFacade sf = new ServerFacade(SERVER_URL);
             RegisterResult res = sf.register(new RegisterRequest(username, password, email));
-            System.out.println("\u001b[38;5;46m  Logged in as " + res.username() + "\u001b[39m");
+            System.out.println("\u001b[38;5;12m  Logged in as " + res.username() + "\u001b[39m");
             return res.authToken();
         } catch (ServiceException e) {
             System.out.println("\u001b[38;5;160m  " + e.getMessage() + "\u001b[39m");
@@ -71,7 +71,7 @@ public class ClientMainFuncs {
             ServerFacade sf = new ServerFacade(SERVER_URL);
             sf.logout(new LogoutRequest(authToken));
             if (print) {
-                System.out.println("\u001b[38;5;46m  Logged out\u001b[39m");
+                System.out.println("\u001b[38;5;12m  Logged out\u001b[39m");
             }
         } catch (ServiceException e) {
             System.out.println("\u001b[38;5;160m  " + e.getMessage() + "\u001b[39m");
@@ -93,7 +93,7 @@ public class ClientMainFuncs {
         try {
             ServerFacade sf = new ServerFacade(SERVER_URL);
             sf.createGame(new CreateGameRequest(authToken, gameName));
-            System.out.println("\u001b[38;5;46m  Created game " + gameName + "\u001b[39m");
+            System.out.println("\u001b[38;5;12m  Successfully created game " + gameName + "\u001b[39m");
         } catch (ServiceException e) {
             System.out.println("\u001b[38;5;160m  " + e.getMessage() + "\u001b[39m");
         }
@@ -128,8 +128,9 @@ public class ClientMainFuncs {
             }
             System.out.println(" Black Username\u001b[39m");
             gameIDs.clear();
-            int n = 1;
+            int n = 0;
             for (ListGamesResultElement game : res.games()) {
+                n++;
                 gameIDs.add(game.gameID());
                 System.out.print("\u001b[38;5;12m  " + n);
                 for (int i = Integer.toString(n).length(); i < longestID; i++) {
@@ -146,17 +147,18 @@ public class ClientMainFuncs {
                     System.out.print(game.whiteUsername());
                     whiteLength = game.whiteUsername().length();
                 }
-                if (game.blackUsername() != null) {
-                    System.out.print(" ");
-                    for (int i = whiteLength; i < longestWhite; i++) {
-                        System.out.print(" ");
-                    }
-                    System.out.print(game.blackUsername());
+                if (game.blackUsername() == null) {
+                    System.out.println("\u001b[39m");
+                    continue;
                 }
+                System.out.print(" ");
+                for (int i = whiteLength; i < longestWhite; i++) {
+                    System.out.print(" ");
+                }
+                System.out.print(game.blackUsername());
                 System.out.println("\u001b[39m");
-                System.out.println();
-                n++;
             }
+            System.out.println();
         } catch (ServiceException e) {
             System.out.println("\u001b[38;5;160m  " + e.getMessage() + "\u001b[39m");
         }
@@ -172,11 +174,11 @@ public class ClientMainFuncs {
         try {
             gameNum = Integer.parseInt(arguments.get(1));
         } catch (NumberFormatException e) {
-            System.out.println("\u001b[38;5;160m  Invalid ID entered\u001b[39m");
+            System.out.println("\u001b[38;5;160m  Invalid ID entered. Try List for a list of games with their IDs.\u001b[39m");
             return;
         }
         if (gameNum <= 0 || gameNum > gameIDs.size()) {
-            System.out.println("\u001b[38;5;160m  Invalid ID entered\u001b[39m");
+            System.out.println("\u001b[38;5;160m  Invalid ID entered. Try List for a list of games with their IDs.\u001b[39m");
             return;
         }
         if (arguments.get(2).equalsIgnoreCase("white")) {
@@ -184,15 +186,95 @@ public class ClientMainFuncs {
         } else if (arguments.get(2).equalsIgnoreCase("black")) {
             color = ChessGame.TeamColor.BLACK;
         } else {
-            System.out.println("\u001b[38;5;160m  Invalid color entered\u001b[39m");
+            System.out.println("\u001b[38;5;160m  Invalid color entered. Color must be WHITE or BLACK.\u001b[39m");
             return;
         }
         try {
             ServerFacade sf = new ServerFacade(SERVER_URL);
             sf.joinGame(new JoinGameRequest(authToken, color, gameIDs.get(gameNum - 1)));
-            System.out.println("\u001b[38;5;46m  Joined game #" + gameNum + " as " + color + "\u001b[39m");
+            printBoard(color);
         } catch (ServiceException e) {
             System.out.println("\u001b[38;5;160m  " + e.getMessage() + "\u001b[39m");
+        }
+    }
+
+    public static void observeGame(ArrayList<String> arguments, String authToken) {
+        int gameNum;
+        if (arguments.size() < 2) {
+            System.out.println("\u001b[38;5;160m  Usage: observe <ID>\u001b[39m");
+            return;
+        }
+        try {
+            gameNum = Integer.parseInt(arguments.get(1));
+        } catch (NumberFormatException e) {
+            System.out.println("\u001b[38;5;160m  Invalid ID entered. Try List for a list of games with their IDs.\u001b[39m");
+            return;
+        }
+        if (gameNum <= 0 || gameNum > gameIDs.size()) {
+            System.out.println("\u001b[38;5;160m  Invalid ID entered. Try List for a list of games with their IDs.\u001b[39m");
+            return;
+        }
+        printBoard(ChessGame.TeamColor.WHITE);
+    }
+
+    private static void printBoard(ChessGame.TeamColor color) {
+        ChessGame game = new ChessGame();
+        ChessBoard board = game.getBoard();
+        if (color == ChessGame.TeamColor.WHITE) {
+            System.out.println("\u2009     a\u2003 b\u2003 c\u2003 d\u2003 e\u2003 f\u2003 g\u2003 h");
+            for (int row = 8; row >= 1; row--) {
+                System.out.print("  " + row + " ");
+                for (int col = 1; col <= 8; col++) {
+                    printPiece(board, new ChessPosition(row, col));
+                }
+                System.out.println("\u001b[39m\u001b[49m " + row + " ");
+            }
+            System.out.println("\u2009     a\u2003 b\u2003 c\u2003 d\u2003 e\u2003 f\u2003 g\u2003 h");
+        } else {
+            System.out.println("\u2009     h\u2003 g\u2003 f\u2003 e\u2003 d\u2003 c\u2003 b\u2003 a");
+            for (int row = 1; row <= 8; row++) {
+                System.out.print("  " + row + " ");
+                for (int col = 8; col >= 1; col--) {
+                    printPiece(board, new ChessPosition(row, col));
+                }
+                System.out.println("\u001b[39m\u001b[49m " + row + " ");
+            }
+            System.out.println("\u2009     h\u2003 g\u2003 f\u2003 e\u2003 d\u2003 c\u2003 b\u2003 a");
+        }
+        System.out.println();
+    }
+
+    private static void printPiece(ChessBoard board, ChessPosition pos) {
+        if ((pos.getRow() + pos.getColumn()) % 2 == 0) {
+            System.out.print("\u001b[48;5;235m");
+        } else {
+            System.out.print("\u001b[48;5;242m");
+        }
+        ChessPiece piece = board.getPiece(pos);
+        if (piece == null) {
+            System.out.print(" \u2003 ");
+            return;
+        }
+        if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+            System.out.print("\u001b[38;5;15m");
+            switch (piece.getPieceType()) {
+                case KING -> System.out.print(" ♔ ");
+                case QUEEN -> System.out.print(" ♕ ");
+                case BISHOP -> System.out.print(" ♗ ");
+                case KNIGHT -> System.out.print(" ♘ ");
+                case ROOK -> System.out.print(" ♖ ");
+                case PAWN -> System.out.print(" ♙ ");
+            }
+        } else {
+            System.out.print("\u001b[38;5;0m");
+            switch (piece.getPieceType()) {
+                case KING -> System.out.print(" ♚ ");
+                case QUEEN -> System.out.print(" ♛ ");
+                case BISHOP -> System.out.print(" ♝ ");
+                case KNIGHT -> System.out.print(" ♞ ");
+                case ROOK -> System.out.print(" ♜ ");
+                case PAWN -> System.out.print(" ♟ ");
+            }
         }
     }
 }

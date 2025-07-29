@@ -53,6 +53,8 @@ public class Main {
                     ClientMainFuncs.listGames(authToken);
                 } else if (arguments.getFirst().equalsIgnoreCase("join")) {
                     ClientMainFuncs.joinGame(arguments, authToken);
+                } else if (arguments.getFirst().equalsIgnoreCase("observe")) {
+                    ClientMainFuncs.observeGame(arguments, authToken);
                 } else if (arguments.getFirst().equalsIgnoreCase("quit")) {
                     ClientMainFuncs.logout(authToken, false);
                     break;
