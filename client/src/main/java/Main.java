@@ -45,12 +45,16 @@ public class Main {
                     System.out.println("\u001b[38;5;12m  help\u001b[39m - with possible commands");
                     System.out.println();
                 } else if (arguments.getFirst().equalsIgnoreCase("logout")) {
-                    ClientMainFuncs.logout(authToken);
+                    ClientMainFuncs.logout(authToken, true);
                     authToken = null;
                 } else if (arguments.getFirst().equalsIgnoreCase("create")) {
                     ClientMainFuncs.createGame(arguments, authToken);
+                } else if (arguments.getFirst().equalsIgnoreCase("list")) {
+                    ClientMainFuncs.listGames(authToken);
+                } else if (arguments.getFirst().equalsIgnoreCase("join")) {
+                    ClientMainFuncs.joinGame(arguments, authToken);
                 } else if (arguments.getFirst().equalsIgnoreCase("quit")) {
-                    ClientMainFuncs.logout(authToken);
+                    ClientMainFuncs.logout(authToken, false);
                     break;
                 } else {
                     System.out.println("\u001b[38;5;160m  Unknown command. Type Help for a list of commands.\u001b[39m");
