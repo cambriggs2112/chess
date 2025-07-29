@@ -26,7 +26,7 @@ public class ClientMainFuncs {
     }
 
     public static String login(ArrayList<String> arguments) {
-        if (arguments.size() != 3) {
+        if (arguments.size() < 3) {
             System.out.println("\u001b[38;5;160m  Usage: login <USERNAME> <PASSWORD>\u001b[39m");
             return null;
         }
@@ -38,13 +38,13 @@ public class ClientMainFuncs {
             System.out.println("\u001b[38;5;46m  Logged in as " + res.username() + "\u001b[39m");
             return res.authToken();
         } catch (ServiceException e) {
-            System.out.println("\u001b[38;5;160m  " + e + "\u001b[39m");
+            System.out.println("\u001b[38;5;160m  " + e.getMessage() + "\u001b[39m");
             return null;
         }
     }
 
     public static String register(ArrayList<String> arguments) {
-        if (arguments.size() != 4) {
+        if (arguments.size() < 4) {
             System.out.println("\u001b[38;5;160m  Usage: register <USERNAME> <PASSWORD> <EMAIL>\u001b[39m");
             return null;
         }
@@ -59,6 +59,16 @@ public class ClientMainFuncs {
         } catch (ServiceException e) {
             System.out.println("\u001b[38;5;160m  " + e.getMessage() + "\u001b[39m");
             return null;
+        }
+    }
+
+    public static void logout(String authToken) {
+        try {
+            ServerFacade sf = new ServerFacade(SERVER_URL);
+            sf.logout(new LogoutRequest(authToken));
+            System.out.println("\u001b[38;5;46m  Logged out\u001b[39m");
+        } catch (ServiceException e) {
+            System.out.println("\u001b[38;5;160m  " + e.getMessage() + "\u001b[39m");
         }
     }
 }
