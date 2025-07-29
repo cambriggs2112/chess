@@ -16,10 +16,12 @@ public class ClientMainFuncs {
             }
         }
         result.add(line);
-        for (int i = 0; i < result.size(); i++) {
-            if (result.get(i).isEmpty()) {
-                result.remove(i);
-                i--;
+        if (!result.getFirst().equalsIgnoreCase("create")) {
+            for (int i = 0; i < result.size(); i++) {
+                if (result.get(i).isEmpty()) {
+                    result.remove(i);
+                    i--;
+                }
             }
         }
         return result;
@@ -67,6 +69,27 @@ public class ClientMainFuncs {
             ServerFacade sf = new ServerFacade(SERVER_URL);
             sf.logout(new LogoutRequest(authToken));
             System.out.println("\u001b[38;5;46m  Logged out\u001b[39m");
+        } catch (ServiceException e) {
+            System.out.println("\u001b[38;5;160m  " + e.getMessage() + "\u001b[39m");
+        }
+    }
+
+    public static void createGame(ArrayList<String> arguments, String authToken) {
+        String gameName = "";
+        for (int i = 1; i < arguments.size(); i++) {
+            gameName += arguments.get(i);
+            if (i + 1 < arguments.size()) {
+                gameName += " ";
+            }
+        }
+        if (gameName.isEmpty()) {
+            System.out.println("\u001b[38;5;160m  Usage: create <NAME>\u001b[39m");
+            return;
+        }
+        try {
+            ServerFacade sf = new ServerFacade(SERVER_URL);
+            CreateGameResult res = sf.createGame(new CreateGameRequest(authToken, gameName));
+            System.out.println("\u001b[38;5;46m  Created game " + gameName + " with ID " + res.gameID() + "\u001b[39m");
         } catch (ServiceException e) {
             System.out.println("\u001b[38;5;160m  " + e.getMessage() + "\u001b[39m");
         }

@@ -47,6 +47,8 @@ public class Main {
                 } else if (arguments.getFirst().equalsIgnoreCase("logout")) {
                     ClientMainFuncs.logout(authToken);
                     authToken = null;
+                } else if (arguments.getFirst().equalsIgnoreCase("create")) {
+                    ClientMainFuncs.createGame(arguments, authToken);
                 } else if (arguments.getFirst().equalsIgnoreCase("quit")) {
                     ClientMainFuncs.logout(authToken);
                     break;
