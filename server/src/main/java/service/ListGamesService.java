@@ -4,6 +4,9 @@ import java.util.ArrayList;
 
 import dataaccess.*;
 import model.*;
+import model.Request.ListGamesRequest;
+import model.Result.ListGamesResult;
+import model.Result.ListGamesResultElement;
 
 /**
  * A service that lists games to authenticated users.

@@ -2,6 +2,8 @@ package service;
 
 import dataaccess.*;
 import model.*;
+import model.Request.RegisterRequest;
+import model.Result.RegisterResult;
 import org.mindrot.jbcrypt.BCrypt;
 import java.util.UUID;
 

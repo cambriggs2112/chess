@@ -3,6 +3,11 @@ package ui;
 import java.util.ArrayList;
 import model.*;
 import chess.*;
+import model.Request.*;
+import model.Result.ListGamesResult;
+import model.Result.ListGamesResultElement;
+import model.Result.LoginResult;
+import model.Result.RegisterResult;
 
 public class ClientMainFuncs {
     private static final String SERVER_URL = "http://localhost:8081";

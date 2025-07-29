@@ -1,5 +1,10 @@
 package client;
 
+import model.Request.*;
+import model.Result.CreateGameResult;
+import model.Result.ListGamesResult;
+import model.Result.LoginResult;
+import model.Result.RegisterResult;
 import org.junit.jupiter.api.*;
 import server.Server;
 import ui.*;
@@ -10,8 +15,7 @@ import java.util.UUID;
 public class ServerFacadeTests {
 
     private static Server server;
-    private static String serverUrl = "http://localhost:8081";
-    private static ServerFacade sf = new ServerFacade(serverUrl);
+    private static ServerFacade sf = null;
     private static String testUsername = "testUser";
     private static String testPassword = "testPass";
     private static String testEmail = "test@gmail.com";
@@ -20,8 +24,9 @@ public class ServerFacadeTests {
     @BeforeAll
     public static void init() {
         server = new Server();
-        var port = server.run(8081);
+        var port = server.run(0);
         System.out.println("Started test HTTP server on " + port);
+        sf = new ServerFacade("http://localhost:" + port);
     }
 
     @AfterAll
@@ -42,11 +47,7 @@ public class ServerFacadeTests {
     @Test
     @Order(2)
     public void registerNormally() {
-        try {
-            sf.clearApplication();
-        } catch (ServiceException e) {
-            Assertions.fail("Setup should not throw exceptions.");
-        }
+        clearSetup();
         try {
             RegisterResult res = sf.register(new RegisterRequest(testUsername, testPassword, testEmail));
             Assertions.assertNotNull(res, "Register returned a null object");
@@ -62,12 +63,7 @@ public class ServerFacadeTests {
     @Order(3)
     public void registerUsernameAlreadyExists() {
         RegisterResult res = null;
-        try {
-            sf.clearApplication();
-            sf.register(new RegisterRequest(testUsername, testPassword, testEmail));
-        } catch (ServiceException e) {
-            Assertions.fail("Setup should not throw exceptions.");
-        }
+        registerSetup();
         try {
             res = sf.register(new RegisterRequest(testUsername, "otherPass", "other@gmail.com"));
             Assertions.fail("Register should have thrown an exception.");
@@ -83,12 +79,7 @@ public class ServerFacadeTests {
     @Test
     @Order(4)
     public void loginNormally() {
-        try {
-            sf.clearApplication();
-            sf.register(new RegisterRequest(testUsername, testPassword, testEmail));
-        } catch (ServiceException e) {
-            Assertions.fail("Setup should not throw exceptions.");
-        }
+        registerSetup();
         try {
             LoginResult res = sf.login(new LoginRequest(testUsername, testPassword));
             Assertions.assertNotNull(res, "Login returned a null object");
@@ -104,12 +95,7 @@ public class ServerFacadeTests {
     @Order(5)
     public void loginWrongInformation() {
         LoginResult res = null;
-        try {
-            sf.clearApplication();
-            sf.register(new RegisterRequest(testUsername, testPassword, testEmail));
-        } catch (ServiceException e) {
-            Assertions.fail("Setup should not throw exceptions.");
-        }
+        registerSetup();
         try {
             res = sf.login(new LoginRequest("wrongUser", testPassword));
             Assertions.fail("Login should have thrown an exception.");
@@ -135,13 +121,7 @@ public class ServerFacadeTests {
     @Test
     @Order(6)
     public void createGameNormally() {
-        String testAuthToken = null;
-        try {
-            sf.clearApplication();
-            testAuthToken = sf.register(new RegisterRequest(testUsername, testPassword, testEmail)).authToken();
-        } catch (ServiceException e) {
-            Assertions.fail("Setup should not throw exceptions.");
-        }
+        String testAuthToken = registerSetup();
         try {
             CreateGameResult res = sf.createGame(new CreateGameRequest(testAuthToken, testGameName));
             Assertions.assertNotNull(res, "Create Game returned a null object");
@@ -172,15 +152,8 @@ public class ServerFacadeTests {
     @Test
     @Order(8)
     public void listGamesNormally() {
-        String testAuthToken = null;
-        int testGameID = 0;
-        try {
-            sf.clearApplication();
-            testAuthToken = sf.register(new RegisterRequest(testUsername, testPassword, testEmail)).authToken();
-            testGameID = sf.createGame(new CreateGameRequest(testAuthToken, testGameName)).gameID();
-        } catch (ServiceException e) {
-            Assertions.fail("Setup should not throw exceptions.");
-        }
+        String testAuthToken = registerSetup();
+        int testGameID = createGameSetup(testAuthToken);
         try {
             ListGamesResult res = sf.listGames(new ListGamesRequest(testAuthToken));
             Assertions.assertNotNull(res, "List Games returned a null object");
@@ -220,15 +193,8 @@ public class ServerFacadeTests {
     @Test
     @Order(10)
     public void joinGameNormally() {
-        String testAuthToken = null;
-        int testGameID = 0;
-        try {
-            sf.clearApplication();
-            testAuthToken = sf.register(new RegisterRequest(testUsername, testPassword, testEmail)).authToken();
-            testGameID = sf.createGame(new CreateGameRequest(testAuthToken, testGameName)).gameID();
-        } catch (ServiceException e) {
-            Assertions.fail("Setup should not throw exceptions.");
-        }
+        String testAuthToken = registerSetup();
+        int testGameID = createGameSetup(testAuthToken);
         try {
             sf.joinGame(new JoinGameRequest(testAuthToken, ChessGame.TeamColor.WHITE, testGameID));
             ListGamesResult res = sf.listGames(new ListGamesRequest(testAuthToken));
@@ -249,16 +215,9 @@ public class ServerFacadeTests {
     @Test
     @Order(11)
     public void joinGameAlreadyTaken() {
-        String testAuthToken = null;
-        int testGameID = 0;
-        try {
-            sf.clearApplication();
-            testAuthToken = sf.register(new RegisterRequest(testUsername, testPassword, testEmail)).authToken();
-            testGameID = sf.createGame(new CreateGameRequest(testAuthToken, testGameName)).gameID();
-            sf.joinGame(new JoinGameRequest(testAuthToken, ChessGame.TeamColor.WHITE, testGameID));
-        } catch (ServiceException e) {
-            Assertions.fail("Setup should not throw exceptions.");
-        }
+        String testAuthToken = registerSetup();
+        int testGameID = createGameSetup(testAuthToken);
+        joinGameSetup(testAuthToken, testGameID);
         try {
             sf.joinGame(new JoinGameRequest(testAuthToken, ChessGame.TeamColor.WHITE, testGameID));
             Assertions.fail("Join Game should have thrown an exception.");
@@ -273,13 +232,7 @@ public class ServerFacadeTests {
     @Test
     @Order(12)
     public void joinGameBadID() {
-        String testAuthToken = null;
-        try {
-            sf.clearApplication();
-            testAuthToken = sf.register(new RegisterRequest(testUsername, testPassword, testEmail)).authToken();
-        } catch (ServiceException e) {
-            Assertions.fail("Setup should not throw exceptions.");
-        }
+        String testAuthToken = registerSetup();
         int random = 0;
         while (random <= 0) {
             random = Math.abs(UUID.randomUUID().hashCode()); // guaranteed random number greater than 0
@@ -298,16 +251,8 @@ public class ServerFacadeTests {
     @Test
     @Order(13)
     public void logoutNormally() {
-        String testAuthToken = null;
-        int testGameID = 0;
-        try {
-            sf.clearApplication();
-            testAuthToken = sf.register(new RegisterRequest(testUsername, testPassword, testEmail)).authToken();
-            testGameID = sf.createGame(new CreateGameRequest(testAuthToken, testGameName)).gameID();
-            sf.joinGame(new JoinGameRequest(testAuthToken, ChessGame.TeamColor.WHITE, testGameID));
-        } catch (ServiceException e) {
-            Assertions.fail("Setup should not throw exceptions.");
-        }
+        String testAuthToken = registerSetup();
+        int testGameID = createGameSetup(testAuthToken);
         try {
             sf.logout(new LogoutRequest(testAuthToken));
         } catch (ServiceException e) {
@@ -358,4 +303,38 @@ public class ServerFacadeTests {
         } catch (ServiceException e) {}
     }
 
+    private static void clearSetup() {
+        try {
+            sf.clearApplication();
+        } catch (ServiceException e) {
+            Assertions.fail("Setup should not throw exceptions.");
+        }
+    }
+
+    private static String registerSetup() {
+        clearSetup();
+        try {
+            return sf.register(new RegisterRequest(testUsername, testPassword, testEmail)).authToken();
+        } catch (ServiceException e) {
+            Assertions.fail("Setup should not throw exceptions.");
+            return null;
+        }
+    }
+
+    private static int createGameSetup(String testAuthToken) {
+        try {
+            return sf.createGame(new CreateGameRequest(testAuthToken, testGameName)).gameID();
+        } catch (ServiceException e) {
+            Assertions.fail("Setup should not throw exceptions.");
+            return 0;
+        }
+    }
+
+    private static void joinGameSetup(String testAuthToken, int testGameID) {
+        try {
+            sf.joinGame(new JoinGameRequest(testAuthToken, ChessGame.TeamColor.WHITE, testGameID));
+        } catch (ServiceException e) {
+            Assertions.fail("Setup should not throw exceptions.");
+        }
+    }
 }

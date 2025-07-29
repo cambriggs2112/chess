@@ -1,4 +1,4 @@
-package model;
+package model.Result;
 
 import java.util.ArrayList;
 

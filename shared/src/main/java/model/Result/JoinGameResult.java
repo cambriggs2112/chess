@@ -1,3 +1,3 @@
-package model;
+package model.Result;
 
 public record JoinGameResult() {}

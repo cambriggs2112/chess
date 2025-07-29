@@ -2,6 +2,8 @@ package server;
 
 import com.google.gson.Gson;
 import model.*;
+import model.Request.JoinGameRequest;
+import model.Result.JoinGameResult;
 import service.*;
 import spark.Request;
 import spark.Response;

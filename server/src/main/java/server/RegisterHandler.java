@@ -2,6 +2,8 @@ package server;
 
 import com.google.gson.Gson;
 import model.*;
+import model.Request.RegisterRequest;
+import model.Result.RegisterResult;
 import service.*;
 import spark.Request;
 import spark.Response;

@@ -3,6 +3,8 @@ package service;
 import chess.ChessGame;
 import dataaccess.*;
 import model.*;
+import model.Request.*;
+import model.Result.*;
 import org.junit.jupiter.api.*;
 import org.mindrot.jbcrypt.BCrypt;
 
