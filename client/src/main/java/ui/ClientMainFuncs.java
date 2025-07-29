@@ -103,6 +103,11 @@ public class ClientMainFuncs {
         try {
             ServerFacade sf = new ServerFacade(SERVER_URL);
             ListGamesResult res = sf.listGames(new ListGamesRequest(authToken));
+            if (res.games().isEmpty()) {
+                System.out.println("\u001b[38;5;12m  No games to display.\u001b[39m");
+                System.out.println();
+                return;
+            }
             int longestID = Math.max(2, Integer.toString(res.games().size()).length());
             int longestName = 4;
             int longestWhite = 14;
@@ -118,7 +123,7 @@ public class ClientMainFuncs {
             for (int i = 2; i < longestID; i++) {
                 System.out.print(" ");
             }
-            System.out.print(" Game");
+            System.out.print(" Name");
             for (int i = 4; i < longestName; i++) {
                 System.out.print(" ");
             }
