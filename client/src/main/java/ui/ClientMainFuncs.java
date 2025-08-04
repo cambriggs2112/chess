@@ -1,6 +1,7 @@
 package ui;
 
 import java.util.ArrayList;
+import java.util.Scanner;
 import model.*;
 import chess.*;
 import model.request.*;
@@ -12,6 +13,7 @@ import model.result.RegisterResult;
 public class ClientMainFuncs {
     private static final String SERVER_URL = "http://localhost:8081";
     private static ArrayList<Integer> gameIDs = new ArrayList<Integer>();
+    private static ArrayList<String> gameNames = new ArrayList<String>();
 
     public static ArrayList<String> parseInput(String line) {
         ArrayList<String> result = new ArrayList<String>();
@@ -138,10 +140,12 @@ public class ClientMainFuncs {
             }
             System.out.println(" Black Username\u001b[39m");
             gameIDs.clear();
+            gameNames.clear();
             int n = 0;
             for (ListGamesResultElement game : res.games()) {
                 n++;
                 gameIDs.add(game.gameID());
+                gameNames.add(game.gameName());
                 System.out.print("\u001b[38;5;12m  " + n);
                 for (int i = Integer.toString(n).length(); i < longestID; i++) {
                     System.out.print(" ");
@@ -174,7 +178,7 @@ public class ClientMainFuncs {
         }
     }
 
-    public static void joinGame(ArrayList<String> arguments, String authToken) {
+    public static void joinGame(ArrayList<String> arguments, String authToken, String username) {
         int gameNum;
         ChessGame.TeamColor color;
         if (arguments.size() < 3) {
@@ -202,13 +206,13 @@ public class ClientMainFuncs {
         try {
             ServerFacade sf = new ServerFacade(SERVER_URL);
             sf.joinGame(new JoinGameRequest(authToken, color, gameIDs.get(gameNum - 1)));
-            printBoard(color);
         } catch (ServiceException e) {
             System.out.println("\u001b[38;5;160m  " + e.getMessage() + "\u001b[39m");
         }
+        gameplayLoop(color, authToken, username, gameNum);
     }
 
-    public static void observeGame(ArrayList<String> arguments, String authToken) {
+    public static void observeGame(ArrayList<String> arguments, String authToken, String username) {
         int gameNum;
         if (arguments.size() < 2) {
             System.out.println("\u001b[38;5;160m  Usage: observe <ID>\u001b[39m");
@@ -224,11 +228,10 @@ public class ClientMainFuncs {
             System.out.println("\u001b[38;5;160m  Invalid ID entered. Try List for a list of games with their IDs.\u001b[39m");
             return;
         }
-        printBoard(ChessGame.TeamColor.WHITE);
+        gameplayLoop(null, authToken, username, gameNum);
     }
 
-    private static void printBoard(ChessGame.TeamColor color) {
-        ChessGame game = new ChessGame();
+    private static void printBoard(ChessGame.TeamColor color, ChessGame game) {
         ChessBoard board = game.getBoard();
         if (color == ChessGame.TeamColor.WHITE) {
             System.out.println("\u2009     a\u2003 b\u2003 c\u2003 d\u2003 e\u2003 f\u2003 g\u2003 h");
@@ -284,6 +287,54 @@ public class ClientMainFuncs {
                 case KNIGHT -> System.out.print(" ♞ ");
                 case ROOK -> System.out.print(" ♜ ");
                 case PAWN -> System.out.print(" ♟ ");
+            }
+        }
+    }
+
+    private static void gameplayLoop(ChessGame.TeamColor color, String authToken, String username, int gameNum) {
+        String gameName = gameNames.get(gameNum - 1);
+        ChessGame game = new ChessGame();
+        Scanner input = new Scanner(System.in);
+        boolean drawBoard = true;
+        while (true) {
+            if (drawBoard) {
+                if (color == null) { // observer
+                    printBoard(ChessGame.TeamColor.WHITE, game);
+                } else {
+                    printBoard(color, game);
+                }
+            }
+            System.out.print("[" + username + "." + gameName + "] >>> ");
+            ArrayList<String> arguments = parseInput(input.nextLine());
+            if (arguments.isEmpty()) {
+                drawBoard = false;
+                continue;
+            }
+            if (arguments.getFirst().equalsIgnoreCase("help")) {
+                drawBoard = false;
+                System.out.println("\u001b[38;5;12m  highlight\u001b[39m - legal moves");
+                if (color != null) {
+                    System.out.println("\u001b[38;5;12m  move <SOURCE> <DESTINATION> <PROMOTION (optional)>\u001b[39m - make a move (e.g. f5 e4 QUEEN)");
+                }
+                System.out.println("\u001b[38;5;12m  redraw\u001b[39m - chess board");
+                if (color != null) {
+                    System.out.println("\u001b[38;5;12m  resign\u001b[39m - from game");
+                }
+                System.out.println("\u001b[38;5;12m  leave\u001b[39m - when you are done");
+                System.out.println("\u001b[38;5;12m  help\u001b[39m - with possible commands");
+                System.out.println();
+            } else if (arguments.getFirst().equalsIgnoreCase("redraw")) {
+                drawBoard = true;
+            } else if (arguments.getFirst().equalsIgnoreCase("leave")) {
+                break;
+            } else if (arguments.getFirst().equalsIgnoreCase("move") && color != null) {
+
+            } else if (arguments.getFirst().equalsIgnoreCase("resign") && color != null) {
+
+            } else if (arguments.getFirst().equalsIgnoreCase("highlight")) {
+
+            } else {
+                System.out.println("\u001b[38;5;160m  Unknown command. Type Help for a list of commands.\u001b[39m");
             }
         }
     }

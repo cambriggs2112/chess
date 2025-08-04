@@ -8,11 +8,12 @@ public class Main {
         System.out.println("♕ Welcome to 240 Chess. Type Help to get started. ♕");
         System.out.println();
         String authToken = null;
+        String username = "";
         while (true) {
             if (authToken == null) {
-                System.out.print("[LOGGED_OUT] >>> ");
+                System.out.print("[] >>> ");
             } else {
-                System.out.print("[LOGGED_IN] >>> ");
+                System.out.print("[" + username + "] >>> ");
             }
             ArrayList<String> arguments = ClientMainFuncs.parseInput(input.nextLine());
             if (arguments.isEmpty()) {
@@ -29,8 +30,14 @@ public class Main {
                     break;
                 } else if (arguments.getFirst().equalsIgnoreCase("login")) {
                     authToken = ClientMainFuncs.login(arguments);
+                    if (arguments.size() > 1) {
+                        username = arguments.get(1);
+                    }
                 } else if (arguments.getFirst().equalsIgnoreCase("register")) {
                     authToken = ClientMainFuncs.register(arguments);
+                    if (arguments.size() > 1) {
+                        username = arguments.get(1);
+                    }
                 } else {
                     System.out.println("\u001b[38;5;160m  Unknown command. Type Help for a list of commands.\u001b[39m");
                 }
@@ -47,14 +54,15 @@ public class Main {
                 } else if (arguments.getFirst().equalsIgnoreCase("logout")) {
                     ClientMainFuncs.logout(authToken, true);
                     authToken = null;
+                    username = "";
                 } else if (arguments.getFirst().equalsIgnoreCase("create")) {
                     ClientMainFuncs.createGame(arguments, authToken);
                 } else if (arguments.getFirst().equalsIgnoreCase("list")) {
                     ClientMainFuncs.listGames(authToken);
                 } else if (arguments.getFirst().equalsIgnoreCase("join")) {
-                    ClientMainFuncs.joinGame(arguments, authToken);
+                    ClientMainFuncs.joinGame(arguments, authToken, username);
                 } else if (arguments.getFirst().equalsIgnoreCase("observe")) {
-                    ClientMainFuncs.observeGame(arguments, authToken);
+                    ClientMainFuncs.observeGame(arguments, authToken, username);
                 } else if (arguments.getFirst().equalsIgnoreCase("quit")) {
                     ClientMainFuncs.logout(authToken, false);
                     break;
