@@ -231,7 +231,7 @@ public class ClientMainFuncs {
         gameplayLoop(null, authToken, username, gameNum);
     }
 
-    private static void printBoard(ChessGame.TeamColor color, ChessGame game) {
+    public static void printBoard(ChessGame.TeamColor color, ChessGame game) {
         ChessBoard board = game.getBoard();
         if (color == ChessGame.TeamColor.WHITE) {
             System.out.println("\u2009     a\u2003 b\u2003 c\u2003 d\u2003 e\u2003 f\u2003 g\u2003 h");
