@@ -35,6 +35,7 @@ public class Server {
 
         Spark.staticFiles.location("web");
 
+        Spark.webSocket("/ws", WebSocketServer.class);
         Spark.delete("/db", (req, res) -> clearApplicationHandler.handleRequest(req, res));
         Spark.post("/game", (req, res) -> createGameHandler.handleRequest(req, res));
         Spark.put("/game", (req, res) -> joinGameHandler.handleRequest(req, res));

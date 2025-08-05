@@ -296,6 +296,7 @@ public class ClientMainFuncs {
         ChessGame game = new ChessGame();
         Scanner input = new Scanner(System.in);
         boolean drawBoard = true;
+        // connect web socket here
         while (true) {
             if (drawBoard) {
                 if (color == null) { // observer
