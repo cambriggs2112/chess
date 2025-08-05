@@ -21,6 +21,7 @@ public class ChessGame {
     private int pawnDoubleMoveCol;
     private TeamColor team;
     private ChessBoard board;
+    private boolean gameActive;
 
     public ChessGame() {
         this.team = TeamColor.WHITE;
@@ -33,6 +34,7 @@ public class ChessGame {
         this.blackLeftRookNeverMoved = true;
         this.blackRightRookNeverMoved = true;
         this.pawnDoubleMoveCol = 0; // 0 = not recent enough for en passant capture
+        this.gameActive = true;
     }
 
     /**
@@ -310,11 +312,14 @@ public class ChessGame {
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
         ChessPiece pieceToMove = board.getPiece(move.getStartPosition());
+        if (!gameActive) {
+            throw new InvalidMoveException("The game is over.");
+        }
         if (pieceToMove == null) {
-            throw new InvalidMoveException("There is no piece here.");
+            throw new InvalidMoveException("There is no piece at the start position.");
         }
         if (pieceToMove.getTeamColor() != team) {
-            throw new InvalidMoveException("This is the opposite team.");
+            throw new InvalidMoveException("The piece at the start position belongs to the opposite team.");
         }
         if (validMoves(move.getStartPosition()) == null) {
             throw new InvalidMoveException("This piece has no valid moves.");
@@ -461,6 +466,10 @@ public class ChessGame {
      */
     public ChessBoard getBoard() {
         return board;
+    }
+
+    public void endGame() {
+        gameActive = false;
     }
 
     @Override
