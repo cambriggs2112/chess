@@ -210,6 +210,7 @@ public class ClientMainFuncs {
             sf.joinGame(new JoinGameRequest(authToken, color, gameIDs.get(gameNum - 1)));
         } catch (ServiceException e) {
             System.out.println("\u001b[38;5;160m  " + e.getMessage() + "\u001b[39m");
+            return;
         }
         gameplayLoop(color, authToken, username, gameNum);
     }
