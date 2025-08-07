@@ -24,7 +24,6 @@ public class ConnectionManager {
         try {
             if (conn.session().isOpen()) {
                 conn.session().getRemote().sendString(gson.toJson(message));
-//                System.out.println("Sent " + message.getServerMessageType() + " message to " + authToken);
             } else {
                 removeConnection(authToken);
             }
@@ -45,11 +44,4 @@ public class ConnectionManager {
         connections.get(authToken).session().close();
         connections.remove(authToken);
     }
-
-//    public void printConnections() {
-//        System.out.println("CONNECTIONS:");
-//        for (String key : connections.keySet()) {
-//            System.out.println(key);
-//        }
-//    }
 }

@@ -331,7 +331,8 @@ public class ClientMainFuncs {
             if (arguments.getFirst().equalsIgnoreCase("help")) {
                 System.out.println("\u001b[38;5;12m  highlight <SOURCE>\u001b[39m - legal moves (e.g. f5)");
                 if (color != null) {
-                    System.out.println("\u001b[38;5;12m  move <SOURCE> <DESTINATION> [QUEEN|BISHOP|KNIGHT|ROOK|(empty)]\u001b[39m - make a move (e.g. f5 e4 QUEEN)");
+                    System.out.println("\u001b[38;5;12m  move <SOURCE> <DESTINATION> " +
+                            "[QUEEN|BISHOP|KNIGHT|ROOK|(empty)]\u001b[39m - make a move (e.g. f5 e4 QUEEN)");
                 }
                 System.out.println("\u001b[38;5;12m  redraw\u001b[39m - chess board");
                 if (color != null) {
@@ -356,16 +357,21 @@ public class ClientMainFuncs {
                     continue;
                 }
                 if (arguments.size() < 4) {
-                    ws.sendCommand(new MakeMoveCommand(authToken, gameID, new ChessMove(parsePos(arguments.get(1)), parsePos(arguments.get(2)), null)));
+                    ws.sendCommand(new MakeMoveCommand(authToken, gameID,
+                            new ChessMove(parsePos(arguments.get(1)), parsePos(arguments.get(2)), null)));
                 } else {
                     if (arguments.get(3).equalsIgnoreCase("queen")) {
-                        ws.sendCommand(new MakeMoveCommand(authToken, gameID, new ChessMove(parsePos(arguments.get(1)), parsePos(arguments.get(2)), ChessPiece.PieceType.QUEEN)));
+                        ws.sendCommand(new MakeMoveCommand(authToken, gameID,
+                                new ChessMove(parsePos(arguments.get(1)), parsePos(arguments.get(2)), ChessPiece.PieceType.QUEEN)));
                     } else if (arguments.get(3).equalsIgnoreCase("bishop")) {
-                        ws.sendCommand(new MakeMoveCommand(authToken, gameID, new ChessMove(parsePos(arguments.get(1)), parsePos(arguments.get(2)), ChessPiece.PieceType.BISHOP)));
+                        ws.sendCommand(new MakeMoveCommand(authToken, gameID,
+                                new ChessMove(parsePos(arguments.get(1)), parsePos(arguments.get(2)), ChessPiece.PieceType.BISHOP)));
                     } else if (arguments.get(3).equalsIgnoreCase("knight")) {
-                        ws.sendCommand(new MakeMoveCommand(authToken, gameID, new ChessMove(parsePos(arguments.get(1)), parsePos(arguments.get(2)), ChessPiece.PieceType.KNIGHT)));
+                        ws.sendCommand(new MakeMoveCommand(authToken, gameID,
+                                new ChessMove(parsePos(arguments.get(1)), parsePos(arguments.get(2)), ChessPiece.PieceType.KNIGHT)));
                     } else if (arguments.get(3).equalsIgnoreCase("rook")) {
-                        ws.sendCommand(new MakeMoveCommand(authToken, gameID, new ChessMove(parsePos(arguments.get(1)), parsePos(arguments.get(2)), ChessPiece.PieceType.ROOK)));
+                        ws.sendCommand(new MakeMoveCommand(authToken, gameID,
+                                new ChessMove(parsePos(arguments.get(1)), parsePos(arguments.get(2)), ChessPiece.PieceType.ROOK)));
                     } else {
                         System.out.println("\u001b[38;5;160m  Invalid promotion piece. Must be QUEEN, BISHOP, KNIGHT, or ROOK.\u001b[39m");
                     } // Note: KING or PAWN is never a valid promotion.
@@ -394,7 +400,11 @@ public class ClientMainFuncs {
 
     private static boolean checkPos(String input) {
         input = input.toLowerCase();
-        return input.length() == 2 && (input.charAt(0) == 'a' || input.charAt(0) == 'b' || input.charAt(0) == 'c' || input.charAt(0) == 'd' || input.charAt(0) == 'e' || input.charAt(0) == 'f' || input.charAt(0) == 'g' || input.charAt(0) == 'h') && (input.charAt(1) == '1' || input.charAt(1) == '2' || input.charAt(1) == '3' || input.charAt(1) == '4' || input.charAt(1) == '5' || input.charAt(1) == '6' || input.charAt(1) == '7' || input.charAt(1) == '8');
+        return input.length() == 2 &&
+                (input.charAt(0) == 'a' || input.charAt(0) == 'b' || input.charAt(0) == 'c' || input.charAt(0) == 'd'
+                        || input.charAt(0) == 'e' || input.charAt(0) == 'f' || input.charAt(0) == 'g' || input.charAt(0) == 'h')
+                && (input.charAt(1) == '1' || input.charAt(1) == '2' || input.charAt(1) == '3' || input.charAt(1) == '4'
+                        || input.charAt(1) == '5' || input.charAt(1) == '6' || input.charAt(1) == '7' || input.charAt(1) == '8');
     }
 
     private static ChessPosition parsePos(String input) {

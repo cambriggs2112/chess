@@ -13,7 +13,8 @@ import chess.*;
 public class WebSocketClient extends Endpoint {
     private Session session;
 
-    public WebSocketClient(String url, ChessGame.TeamColor color, String username, String gameName) throws URISyntaxException, DeploymentException, IOException {
+    public WebSocketClient(String url, ChessGame.TeamColor color, String username, String gameName)
+            throws URISyntaxException, DeploymentException, IOException {
         this.session = ContainerProvider.getWebSocketContainer().connectToServer(this, new URI(url));
         this.session.addMessageHandler(new MessageHandler.Whole<String>() {
             @Override

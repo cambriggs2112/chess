@@ -61,7 +61,8 @@ public class ChessMove {
     }
 
     public String toString() {
-        return numberToLetter(startPosition.getColumn()) + startPosition.getRow() + " " + numberToLetter(endPosition.getColumn()) + endPosition.getRow();
+        return numberToLetter(startPosition.getColumn()) + startPosition.getRow() +
+                " " + numberToLetter(endPosition.getColumn()) + endPosition.getRow();
     }
 
     private String numberToLetter(int num) {
