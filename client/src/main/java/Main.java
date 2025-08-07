@@ -5,7 +5,7 @@ import ui.*;
 public class Main {
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
-        System.out.println("♕ Welcome to 240 Chess. Type Help to get started. ♕");
+        System.out.println("♕ Welcome to Chess. Register or Login to get started. ♕");
         System.out.println();
         String authToken = null;
         String username = "";

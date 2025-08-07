@@ -86,78 +86,79 @@ public class ChessGame {
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         ArrayList<ChessMove> result = new ArrayList<ChessMove>();
-        if (board.getPiece(startPosition) != null) {
-            ChessPiece startPiece = board.getPiece(startPosition);
-            // add normal moves
-            for (ChessMove move : startPiece.pieceMoves(board, startPosition)) {
-                if (testForNoCheck(move)) {
-                    result.add(move);
+        if (board.getPiece(startPosition) == null) {
+            return null;
+        }
+        ChessPiece startPiece = board.getPiece(startPosition);
+        // add normal moves
+        for (ChessMove move : startPiece.pieceMoves(board, startPosition)) {
+            if (testForNoCheck(move)) {
+                result.add(move);
+            }
+        }
+        // add castling moves
+        if (startPiece.getPieceType() == ChessPiece.PieceType.KING && startPosition.getColumn() == 5) {
+            if (startPiece.getTeamColor() == TeamColor.WHITE
+                    && startPosition.getRow() == 1
+                    && whiteKingNeverMoved
+                    && !isInCheck(TeamColor.WHITE)) {
+                // Left
+                if (board.getPiece(new ChessPosition(1, 2)) == null
+                        && board.getPiece(new ChessPosition(1, 3)) == null
+                        && board.getPiece(new ChessPosition(1, 4)) == null
+                        && whiteLeftRookNeverMoved
+                        && testForNoCheck(new ChessMove(new ChessPosition(1, 5), new ChessPosition(1, 4), null))
+                        && testForNoCheck(new ChessMove(new ChessPosition(1, 5), new ChessPosition(1, 3), null))) {
+                    result.add(new ChessMove(new ChessPosition(1, 5), new ChessPosition(1, 3), null));
+                }
+                // Right
+                if (board.getPiece(new ChessPosition(1, 6)) == null
+                        && board.getPiece(new ChessPosition(1, 7)) == null
+                        && whiteRightRookNeverMoved
+                        && testForNoCheck(new ChessMove(new ChessPosition(1, 5), new ChessPosition(1, 6), null))
+                        && testForNoCheck(new ChessMove(new ChessPosition(1, 5), new ChessPosition(1, 7), null))) {
+                    result.add(new ChessMove(new ChessPosition(1, 5), new ChessPosition(1, 7), null));
                 }
             }
-            // add castling moves
-            if (startPiece.getPieceType() == ChessPiece.PieceType.KING && startPosition.getColumn() == 5) {
-                if (startPiece.getTeamColor() == TeamColor.WHITE
-                        && startPosition.getRow() == 1
-                        && whiteKingNeverMoved
-                        && !isInCheck(TeamColor.WHITE)) {
-                    // Left
-                    if (board.getPiece(new ChessPosition(1, 2)) == null
-                            && board.getPiece(new ChessPosition(1, 3)) == null
-                            && board.getPiece(new ChessPosition(1, 4)) == null
-                            && whiteLeftRookNeverMoved
-                            && testForNoCheck(new ChessMove(new ChessPosition(1, 5), new ChessPosition(1, 4), null))
-                            && testForNoCheck(new ChessMove(new ChessPosition(1, 5), new ChessPosition(1, 3), null))) {
-                        result.add(new ChessMove(new ChessPosition(1, 5), new ChessPosition(1, 3), null));
-                    }
-                    // Right
-                    if (board.getPiece(new ChessPosition(1, 6)) == null
-                            && board.getPiece(new ChessPosition(1, 7)) == null
-                            && whiteRightRookNeverMoved
-                            && testForNoCheck(new ChessMove(new ChessPosition(1, 5), new ChessPosition(1, 6), null))
-                            && testForNoCheck(new ChessMove(new ChessPosition(1, 5), new ChessPosition(1, 7), null))) {
-                        result.add(new ChessMove(new ChessPosition(1, 5), new ChessPosition(1, 7), null));
-                    }
+            if (startPiece.getTeamColor() == TeamColor.BLACK
+                    && startPosition.getRow() == 8
+                    && blackKingNeverMoved
+                    && !isInCheck(TeamColor.BLACK)) {
+                // Left
+                if (board.getPiece(new ChessPosition(8, 2)) == null
+                        && board.getPiece(new ChessPosition(8, 3)) == null
+                        && board.getPiece(new ChessPosition(8, 4)) == null
+                        && blackLeftRookNeverMoved
+                        && testForNoCheck(new ChessMove(new ChessPosition(8, 5), new ChessPosition(8, 4), null))
+                        && testForNoCheck(new ChessMove(new ChessPosition(8, 5), new ChessPosition(8, 3), null))) {
+                    result.add(new ChessMove(new ChessPosition(8, 5), new ChessPosition(8, 3), null));
                 }
-                if (startPiece.getTeamColor() == TeamColor.BLACK
-                        && startPosition.getRow() == 8
-                        && blackKingNeverMoved
-                        && !isInCheck(TeamColor.BLACK)) {
-                    // Left
-                    if (board.getPiece(new ChessPosition(8, 2)) == null
-                            && board.getPiece(new ChessPosition(8, 3)) == null
-                            && board.getPiece(new ChessPosition(8, 4)) == null
-                            && blackLeftRookNeverMoved
-                            && testForNoCheck(new ChessMove(new ChessPosition(8, 5), new ChessPosition(8, 4), null))
-                            && testForNoCheck(new ChessMove(new ChessPosition(8, 5), new ChessPosition(8, 3), null))) {
-                        result.add(new ChessMove(new ChessPosition(8, 5), new ChessPosition(8, 3), null));
-                    }
-                    // Right
-                    if (board.getPiece(new ChessPosition(8, 6)) == null
-                            && board.getPiece(new ChessPosition(8, 7)) == null
-                            && blackRightRookNeverMoved
-                            && testForNoCheck(new ChessMove(new ChessPosition(8, 5), new ChessPosition(8, 6), null))
-                            && testForNoCheck(new ChessMove(new ChessPosition(8, 5), new ChessPosition(8, 7), null))) {
-                        result.add(new ChessMove(new ChessPosition(8, 5), new ChessPosition(8, 7), null));
-                    }
+                // Right
+                if (board.getPiece(new ChessPosition(8, 6)) == null
+                        && board.getPiece(new ChessPosition(8, 7)) == null
+                        && blackRightRookNeverMoved
+                        && testForNoCheck(new ChessMove(new ChessPosition(8, 5), new ChessPosition(8, 6), null))
+                        && testForNoCheck(new ChessMove(new ChessPosition(8, 5), new ChessPosition(8, 7), null))) {
+                    result.add(new ChessMove(new ChessPosition(8, 5), new ChessPosition(8, 7), null));
                 }
             }
-            // add en passant moves
-            if (startPiece.getPieceType() == ChessPiece.PieceType.PAWN && pawnDoubleMoveCol != 0) {
-                if (startPiece.getTeamColor() == TeamColor.WHITE && startPosition.getRow() == 5) {
-                    if (startPosition.getColumn() == pawnDoubleMoveCol - 1) {
-                        result.add(new ChessMove(startPosition, new ChessPosition(6, pawnDoubleMoveCol), null));
-                    }
-                    if (startPosition.getColumn() == pawnDoubleMoveCol + 1) {
-                        result.add(new ChessMove(startPosition, new ChessPosition(6, pawnDoubleMoveCol), null));
-                    }
+        }
+        // add en passant moves
+        if (startPiece.getPieceType() == ChessPiece.PieceType.PAWN && pawnDoubleMoveCol != 0) {
+            if (startPiece.getTeamColor() == TeamColor.WHITE && startPosition.getRow() == 5) {
+                if (startPosition.getColumn() == pawnDoubleMoveCol - 1) {
+                    result.add(new ChessMove(startPosition, new ChessPosition(6, pawnDoubleMoveCol), null));
                 }
-                if (startPiece.getTeamColor() == TeamColor.BLACK && startPosition.getRow() == 4) {
-                    if (startPosition.getColumn() == pawnDoubleMoveCol - 1) {
-                        result.add(new ChessMove(startPosition, new ChessPosition(3, pawnDoubleMoveCol), null));
-                    }
-                    if (startPosition.getColumn() == pawnDoubleMoveCol + 1) {
-                        result.add(new ChessMove(startPosition, new ChessPosition(3, pawnDoubleMoveCol), null));
-                    }
+                if (startPosition.getColumn() == pawnDoubleMoveCol + 1) {
+                    result.add(new ChessMove(startPosition, new ChessPosition(6, pawnDoubleMoveCol), null));
+                }
+            }
+            if (startPiece.getTeamColor() == TeamColor.BLACK && startPosition.getRow() == 4) {
+                if (startPosition.getColumn() == pawnDoubleMoveCol - 1) {
+                    result.add(new ChessMove(startPosition, new ChessPosition(3, pawnDoubleMoveCol), null));
+                }
+                if (startPosition.getColumn() == pawnDoubleMoveCol + 1) {
+                    result.add(new ChessMove(startPosition, new ChessPosition(3, pawnDoubleMoveCol), null));
                 }
             }
         }
@@ -310,9 +311,6 @@ public class ChessGame {
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
         ChessPiece pieceToMove = board.getPiece(move.getStartPosition());
-        if (!gameActive) {
-            throw new InvalidMoveException("The game is over.");
-        }
         if (pieceToMove == null) {
             throw new InvalidMoveException("There is no piece at the start position.");
         }
@@ -423,6 +421,7 @@ public class ChessGame {
                 }
             }
         }
+        gameActive = false;
         return true;
     }
 
@@ -445,6 +444,7 @@ public class ChessGame {
                 }
             }
         }
+        gameActive = false;
         return true;
     }
 
@@ -469,6 +469,8 @@ public class ChessGame {
     public void endGame() {
         gameActive = false;
     }
+
+    public boolean getGameActive() {return gameActive;}
 
     @Override
     public boolean equals(Object o) {

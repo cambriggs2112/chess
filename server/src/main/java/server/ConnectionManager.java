@@ -22,22 +22,34 @@ public class ConnectionManager {
             return;
         }
         try {
-            conn.session().getRemote().sendString(gson.toJson(message));
+            if (conn.session().isOpen()) {
+                conn.session().getRemote().sendString(gson.toJson(message));
+//                System.out.println("Sent " + message.getServerMessageType() + " message to " + authToken);
+            } else {
+                removeConnection(authToken);
+            }
         } catch (IOException e) {
-            System.out.println(e.getMessage());
             removeConnection(authToken);
         }
     }
 
-    public void broadcastAllExcept(String authToken, ServerMessage message) {
+    public void broadcastAllExcept(String authToken, int gameID, ServerMessage message) {
         for (Connection conn : connections.values()) {
-            if (!conn.authToken().equals(authToken)) {
-                broadcastOne(authToken, message);
+            if (!conn.authToken().equals(authToken) && conn.gameID() == gameID) {
+                broadcastOne(conn.authToken(), message);
             }
         }
     }
 
     public void removeConnection(String authToken) {
+        connections.get(authToken).session().close();
         connections.remove(authToken);
     }
+
+//    public void printConnections() {
+//        System.out.println("CONNECTIONS:");
+//        for (String key : connections.keySet()) {
+//            System.out.println(key);
+//        }
+//    }
 }

@@ -15,6 +15,7 @@ public class ClientMainFuncs {
     private static final String SERVER_URL = "http://localhost:8081";
     private static ArrayList<Integer> gameIDs = new ArrayList<Integer>();
     private static ArrayList<String> gameNames = new ArrayList<String>();
+    private static ChessGame gameObj = null;
 
     public static ArrayList<String> parseInput(String line) {
         ArrayList<String> result = new ArrayList<String>();
@@ -210,7 +211,7 @@ public class ClientMainFuncs {
         } catch (ServiceException e) {
             System.out.println("\u001b[38;5;160m  " + e.getMessage() + "\u001b[39m");
         }
-        // gameplayLoop(color, authToken, username, gameNum);
+        gameplayLoop(color, authToken, username, gameNum);
     }
 
     public static void observeGame(ArrayList<String> arguments, String authToken, String username) {
@@ -229,22 +230,12 @@ public class ClientMainFuncs {
             System.out.println("\u001b[38;5;160m  Invalid ID entered. Try List for a list of games with their IDs.\u001b[39m");
             return;
         }
-        // gameplayLoop(null, authToken, username, gameNum);
+        gameplayLoop(null, authToken, username, gameNum);
     }
 
-    public static void printBoard(ChessGame.TeamColor color, ChessGame game, ArrayList<ChessMove> movesToHighlight) {
-        ChessBoard board = game.getBoard();
-        if (color == ChessGame.TeamColor.WHITE) {
-            System.out.println("\u2009     a\u2003 b\u2003 c\u2003 d\u2003 e\u2003 f\u2003 g\u2003 h");
-            for (int row = 8; row >= 1; row--) {
-                System.out.print("  " + row + " ");
-                for (int col = 1; col <= 8; col++) {
-                    printPiece(board, new ChessPosition(row, col), movesToHighlight);
-                }
-                System.out.println("\u001b[39m\u001b[49m " + row + " ");
-            }
-            System.out.println("\u2009     a\u2003 b\u2003 c\u2003 d\u2003 e\u2003 f\u2003 g\u2003 h");
-        } else {
+    public static void printBoard(ChessGame.TeamColor color, ArrayList<ChessMove> movesToHighlight) {
+        ChessBoard board = gameObj.getBoard();
+        if (color == ChessGame.TeamColor.BLACK) {
             System.out.println("\u2009     h\u2003 g\u2003 f\u2003 e\u2003 d\u2003 c\u2003 b\u2003 a");
             for (int row = 1; row <= 8; row++) {
                 System.out.print("  " + row + " ");
@@ -254,7 +245,17 @@ public class ClientMainFuncs {
                 System.out.println("\u001b[39m\u001b[49m " + row + " ");
             }
             System.out.println("\u2009     h\u2003 g\u2003 f\u2003 e\u2003 d\u2003 c\u2003 b\u2003 a");
-        }
+        } else {
+            System.out.println("\u2009     a\u2003 b\u2003 c\u2003 d\u2003 e\u2003 f\u2003 g\u2003 h");
+            for (int row = 8; row >= 1; row--) {
+                System.out.print("  " + row + " ");
+                for (int col = 1; col <= 8; col++) {
+                    printPiece(board, new ChessPosition(row, col), movesToHighlight);
+                }
+                System.out.println("\u001b[39m\u001b[49m " + row + " ");
+            }
+            System.out.println("\u2009     a\u2003 b\u2003 c\u2003 d\u2003 e\u2003 f\u2003 g\u2003 h");
+            }
         System.out.println();
     }
 
@@ -292,103 +293,102 @@ public class ClientMainFuncs {
     // 242 = light gray
     // 22 = dark green
     // 46 = light green
-    // 226 = yellow
+    // 12 = blue
     private static int backgroundColorType(ChessPosition pos, ArrayList<ChessMove> movesToHighlight) {
-        for (ChessMove move : movesToHighlight) {
-            if (move.getStartPosition().equals(pos)) {
-                return 226;
-            }
-            if (move.getEndPosition().equals(pos)) {
-                if ((pos.getRow() + pos.getColumn()) % 2 == 0) {
-                    return 22;
-                } else {
-                    return 46;
+        if (movesToHighlight != null) {
+            for (ChessMove move : movesToHighlight) {
+                if (move.getStartPosition().equals(pos)) {
+                    return 12;
+                }
+                if (move.getEndPosition().equals(pos)) {
+                    return ((pos.getRow() + pos.getColumn()) % 2 == 0) ? 22 : 46;
                 }
             }
         }
-        if ((pos.getRow() + pos.getColumn()) % 2 == 0) {
-            return 235;
-        } else {
-            return 242;
-        }
+        return ((pos.getRow() + pos.getColumn()) % 2 == 0) ? 235 : 242;
     }
 
+    // color is null if observer
     private static void gameplayLoop(ChessGame.TeamColor color, String authToken, String username, int gameNum) {
-//        String gameName = gameNames.get(gameNum - 1);
-//        int gameID = gameIDs.get(gameNum - 1);
-//        Scanner input = new Scanner(System.in);
-//        WebSocketClient ws;
-//        try {
-//            ws = new WebSocketClient(SERVER_URL.replace("http", "ws") + "/ws", color);
-//        } catch (Exception e) {
-//            System.out.println("\u001b[38;5;160m  Unable to enter gameplay: " + e.getMessage() + "\u001b[39m");
-//            return;
-//        }
-//        ws.sendCommand(new ConnectCommand(authToken, gameID, color));
-//        while (true) {
-//            System.out.print("[" + username + "." + gameName + "] >>> ");
-//            ArrayList<String> arguments = parseInput(input.nextLine());
-//            if (arguments.isEmpty()) {
-//                continue;
-//            }
-//            if (arguments.getFirst().equalsIgnoreCase("help")) {
-//                System.out.println("\u001b[38;5;12m  highlight <SOURCE>\u001b[39m - legal moves (e.g. f5)");
-//                if (color != null) {
-//                    System.out.println("\u001b[38;5;12m  move <SOURCE> <DESTINATION> [QUEEN|BISHOP|KNIGHT|ROOK|(empty)]\u001b[39m - make a move (e.g. f5 e4 QUEEN)");
-//                }
-//                System.out.println("\u001b[38;5;12m  redraw\u001b[39m - chess board");
-//                if (color != null) {
-//                    System.out.println("\u001b[38;5;12m  resign\u001b[39m - from game");
-//                }
-//                System.out.println("\u001b[38;5;12m  leave\u001b[39m - when you are done");
-//                System.out.println("\u001b[38;5;12m  help\u001b[39m - with possible commands");
-//                System.out.println();
-//            } else if (arguments.getFirst().equalsIgnoreCase("redraw")) {
-//                printBoard(color, ws.getGame(), new ArrayList<ChessMove>());
-//            } else if (arguments.getFirst().equalsIgnoreCase("leave")) {
-//                ws.sendCommand(new LeaveCommand(authToken, gameID, color));
-//                ws.close();
-//                break;
-//            } else if (arguments.getFirst().equalsIgnoreCase("move") && color != null) {
-//                if (arguments.size() < 3) {
-//                    System.out.println("\u001b[38;5;160m  Usage: move <SOURCE> <DESTINATION> [QUEEN|BISHOP|KNIGHT|ROOK|(empty)]\u001b[39m");
-//                    return;
-//                }
-//                if (!(checkPos(arguments.get(1)) && checkPos(arguments.get(2)))) {
-//                    System.out.println("\u001b[38;5;160m  Invalid position notation\u001b[39m");
-//                    return;
-//                }
-//                if (arguments.size() < 4) {
-//                    ws.sendCommand(new MakeMoveCommand(authToken, gameID, new ChessMove(parsePos(arguments.get(1)), parsePos(arguments.get(2)), null)));
-//                } else {
-//                    if (arguments.get(4).equalsIgnoreCase("queen")) {
-//                        ws.sendCommand(new MakeMoveCommand(authToken, gameID, new ChessMove(parsePos(arguments.get(1)), parsePos(arguments.get(2)), ChessPiece.PieceType.QUEEN)));
-//                    } else if (arguments.get(4).equalsIgnoreCase("bishop")) {
-//                        ws.sendCommand(new MakeMoveCommand(authToken, gameID, new ChessMove(parsePos(arguments.get(1)), parsePos(arguments.get(2)), ChessPiece.PieceType.BISHOP)));
-//                    } else if (arguments.get(4).equalsIgnoreCase("knight")) {
-//                        ws.sendCommand(new MakeMoveCommand(authToken, gameID, new ChessMove(parsePos(arguments.get(1)), parsePos(arguments.get(2)), ChessPiece.PieceType.KNIGHT)));
-//                    } else if (arguments.get(4).equalsIgnoreCase("rook")) {
-//                        ws.sendCommand(new MakeMoveCommand(authToken, gameID, new ChessMove(parsePos(arguments.get(1)), parsePos(arguments.get(2)), ChessPiece.PieceType.ROOK)));
-//                    } else {
-//                        System.out.println("\u001b[38;5;160m  Invalid promotion piece. Must be QUEEN, BISHOP, KNIGHT, or ROOK.\u001b[39m");
-//                    } // Note: KING or PAWN is never a valid promotion.
-//                }
-//            } else if (arguments.getFirst().equalsIgnoreCase("resign") && color != null) {
-//                ws.sendCommand(new ResignCommand(authToken, gameID, color));
-//            } else if (arguments.getFirst().equalsIgnoreCase("highlight")) {
-//                if (arguments.size() < 2) {
-//                    System.out.println("\u001b[38;5;160m  Usage: highlight <SOURCE>\u001b[39m");
-//                    return;
-//                }
-//                if (!(checkPos(arguments.get(1)))) {
-//                    System.out.println("\u001b[38;5;160m  Invalid position notation\u001b[39m");
-//                    return;
-//                }
-//                printBoard(color, ws.getGame(), (ArrayList<ChessMove>) ws.getGame().validMoves(parsePos(arguments.get(1))));
-//            } else {
-//                System.out.println("\u001b[38;5;160m  Unknown command. Type Help for a list of commands.\u001b[39m");
-//            }
-//        }
+        String gameName = gameNames.get(gameNum - 1);
+        int gameID = gameIDs.get(gameNum - 1);
+        Scanner input = new Scanner(System.in);
+        WebSocketClient ws;
+        try {
+            ws = new WebSocketClient(SERVER_URL.replace("http", "ws") + "/ws", color, username, gameName);
+        } catch (Exception e) {
+            System.out.println("\u001b[38;5;160m  Unable to enter gameplay: " + e.getMessage() + "\u001b[39m");
+            return;
+        }
+        ws.sendCommand(new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID));
+        while (true) {
+            System.out.print("[" + username + "." + gameName + "] >>> ");
+            ArrayList<String> arguments = parseInput(input.nextLine());
+            if (arguments.isEmpty()) {
+                continue;
+            }
+            if (arguments.getFirst().equalsIgnoreCase("help")) {
+                System.out.println("\u001b[38;5;12m  highlight <SOURCE>\u001b[39m - legal moves (e.g. f5)");
+                if (color != null) {
+                    System.out.println("\u001b[38;5;12m  move <SOURCE> <DESTINATION> [QUEEN|BISHOP|KNIGHT|ROOK|(empty)]\u001b[39m - make a move (e.g. f5 e4 QUEEN)");
+                }
+                System.out.println("\u001b[38;5;12m  redraw\u001b[39m - chess board");
+                if (color != null) {
+                    System.out.println("\u001b[38;5;12m  resign\u001b[39m - from game");
+                }
+                System.out.println("\u001b[38;5;12m  leave\u001b[39m - when you are done");
+                System.out.println("\u001b[38;5;12m  help\u001b[39m - with possible commands");
+                System.out.println();
+            } else if (arguments.getFirst().equalsIgnoreCase("redraw")) {
+                printBoard(color, null);
+            } else if (arguments.getFirst().equalsIgnoreCase("leave")) {
+                ws.sendCommand(new UserGameCommand(UserGameCommand.CommandType.LEAVE, authToken, gameID));
+                ws.close();
+                break;
+            } else if (arguments.getFirst().equalsIgnoreCase("move") && color != null) {
+                if (arguments.size() < 3) {
+                    System.out.println("\u001b[38;5;160m  Usage: move <SOURCE> <DESTINATION> [QUEEN|BISHOP|KNIGHT|ROOK|(empty)]\u001b[39m");
+                    continue;
+                }
+                if (!(checkPos(arguments.get(1)) && checkPos(arguments.get(2)))) {
+                    System.out.println("\u001b[38;5;160m  Invalid position notation\u001b[39m");
+                    continue;
+                }
+                if (arguments.size() < 4) {
+                    ws.sendCommand(new MakeMoveCommand(authToken, gameID, new ChessMove(parsePos(arguments.get(1)), parsePos(arguments.get(2)), null)));
+                } else {
+                    if (arguments.get(3).equalsIgnoreCase("queen")) {
+                        ws.sendCommand(new MakeMoveCommand(authToken, gameID, new ChessMove(parsePos(arguments.get(1)), parsePos(arguments.get(2)), ChessPiece.PieceType.QUEEN)));
+                    } else if (arguments.get(3).equalsIgnoreCase("bishop")) {
+                        ws.sendCommand(new MakeMoveCommand(authToken, gameID, new ChessMove(parsePos(arguments.get(1)), parsePos(arguments.get(2)), ChessPiece.PieceType.BISHOP)));
+                    } else if (arguments.get(3).equalsIgnoreCase("knight")) {
+                        ws.sendCommand(new MakeMoveCommand(authToken, gameID, new ChessMove(parsePos(arguments.get(1)), parsePos(arguments.get(2)), ChessPiece.PieceType.KNIGHT)));
+                    } else if (arguments.get(3).equalsIgnoreCase("rook")) {
+                        ws.sendCommand(new MakeMoveCommand(authToken, gameID, new ChessMove(parsePos(arguments.get(1)), parsePos(arguments.get(2)), ChessPiece.PieceType.ROOK)));
+                    } else {
+                        System.out.println("\u001b[38;5;160m  Invalid promotion piece. Must be QUEEN, BISHOP, KNIGHT, or ROOK.\u001b[39m");
+                    } // Note: KING or PAWN is never a valid promotion.
+                }
+            } else if (arguments.getFirst().equalsIgnoreCase("resign") && color != null) {
+                ws.sendCommand(new UserGameCommand(UserGameCommand.CommandType.RESIGN, authToken, gameID));
+            } else if (arguments.getFirst().equalsIgnoreCase("highlight")) {
+                if (arguments.size() < 2) {
+                    System.out.println("\u001b[38;5;160m  Usage: highlight <SOURCE>\u001b[39m");
+                    continue;
+                }
+                if (!(checkPos(arguments.get(1)))) {
+                    System.out.println("\u001b[38;5;160m  Invalid position notation\u001b[39m");
+                    continue;
+                }
+                if (gameObj.getGameActive()) {
+                    printBoard(color, (ArrayList<ChessMove>) gameObj.validMoves(parsePos(arguments.get(1))));
+                } else {
+                    printBoard(color, null);
+                }
+            } else {
+                System.out.println("\u001b[38;5;160m  Unknown command. Type Help for a list of commands.\u001b[39m");
+            }
+        }
     }
 
     private static boolean checkPos(String input) {
@@ -411,5 +411,9 @@ public class ClientMainFuncs {
             case 'h' -> col = 8;
         }
         return new ChessPosition(row, col);
+    }
+
+    public static void updateGameObj(ChessGame game) {
+        gameObj = game;
     }
 }

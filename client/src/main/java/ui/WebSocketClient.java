@@ -12,10 +12,8 @@ import chess.*;
 
 public class WebSocketClient extends Endpoint {
     private Session session;
-    private static ChessGame gameObj = null;
-    // Consider adding move here
 
-    public WebSocketClient(String url, ChessGame.TeamColor color) throws URISyntaxException, DeploymentException, IOException {
+    public WebSocketClient(String url, ChessGame.TeamColor color, String username, String gameName) throws URISyntaxException, DeploymentException, IOException {
         this.session = ContainerProvider.getWebSocketContainer().connectToServer(this, new URI(url));
         this.session.addMessageHandler(new MessageHandler.Whole<String>() {
             @Override
@@ -25,33 +23,27 @@ public class WebSocketClient extends Endpoint {
                 switch (sm.getServerMessageType()) {
                     case LOAD_GAME:
                         LoadGameMessage lgm = gson.fromJson(message, LoadGameMessage.class);
-                        gameObj = lgm.getGame();
+                        ClientMainFuncs.updateGameObj(lgm.getGame());
                         ChessMove gameMove = lgm.getMove();
                         ArrayList<ChessMove> moves = new ArrayList<ChessMove>();
                         if (gameMove != null) {
                             moves.add(gameMove);
                         }
-                        if (color == null) {
-                            ClientMainFuncs.printBoard(ChessGame.TeamColor.WHITE, lgm.getGame(), moves);
-                        } else {
-                            ClientMainFuncs.printBoard(color, lgm.getGame(), moves);
-                        }
+                        System.out.println();
+                        ClientMainFuncs.printBoard(color, moves);
                         break;
                     case ERROR:
                         ErrorMessage em = gson.fromJson(message, ErrorMessage.class);
-                        System.out.println("\u001b[38;5;160m  " + em.getErrorMessage() + "\u001b[39m");
+                        System.out.println("\u001b[38;5;160m" + em.getErrorMessage() + "\u001b[39m");
                         break;
                     case NOTIFICATION:
                         NotificationMessage nm = gson.fromJson(message, NotificationMessage.class);
-                        System.out.println("\u001b[38;5;46m  " + nm.getMessage() + "\u001b[39m");
+                        System.out.println("\u001b[38;5;46m" + nm.getMessage() + "\u001b[39m");
                         break;
                 }
+                System.out.print("[" + username + "." + gameName + "] >>> ");
             }
         });
-    }
-
-    public ChessGame getGame() {
-        return gameObj;
     }
 
     public void onOpen(Session session, EndpointConfig endPointConfig) {}
@@ -61,7 +53,7 @@ public class WebSocketClient extends Endpoint {
             Gson gson = new Gson();
             this.session.getBasicRemote().sendText(gson.toJson(command));
         } catch (IOException e) {
-            System.out.println("\u001b[38;5;160m  ERROR: " + e.getMessage() + "\u001b[39m");
+            System.out.println("\u001b[38;5;160mERROR: " + e.getMessage() + "\u001b[39m");
         }
     }
 
@@ -69,7 +61,7 @@ public class WebSocketClient extends Endpoint {
         try {
             this.session.close();
         } catch (IOException e) {
-            System.out.println("\u001b[38;5;160m  ERROR: " + e.getMessage() + "\u001b[39m");
+            System.out.println("\u001b[38;5;160mERROR: " + e.getMessage() + "\u001b[39m");
         }
     }
 }
