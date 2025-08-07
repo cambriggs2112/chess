@@ -7,30 +7,29 @@ import websocket.messages.*;
 import java.io.*;
 
 public class ConnectionManager {
-    private static HashMap<String, Connection> connections = new HashMap<String, Connection>();
+    private HashMap<String, Connection> connections = new HashMap<String, Connection>();
 
-    public static void addConnection(String authToken, int gameID, Session session) {
+    public ConnectionManager() {}
+
+    public void addConnection(String authToken, int gameID, Session session) {
         connections.put(authToken, new Connection(authToken, gameID, session));
     }
 
-    public static void broadcastOne(String authToken, ServerMessage message) {
+    public void broadcastOne(String authToken, ServerMessage message) {
         Gson gson = new Gson();
         Connection conn = connections.get(authToken);
         if (conn == null) {
             return;
         }
-        try (Session session = conn.session()) {
-            if (session.isOpen()) {
-                session.getRemote().sendString(gson.toJson(message));
-            } else {
-                removeConnection(authToken);
-            }
+        try {
+            conn.session().getRemote().sendString(gson.toJson(message));
         } catch (IOException e) {
+            System.out.println(e.getMessage());
             removeConnection(authToken);
         }
     }
 
-    public static void broadcastAllExcept(String authToken, ServerMessage message) {
+    public void broadcastAllExcept(String authToken, ServerMessage message) {
         for (Connection conn : connections.values()) {
             if (!conn.authToken().equals(authToken)) {
                 broadcastOne(authToken, message);
@@ -38,7 +37,7 @@ public class ConnectionManager {
         }
     }
 
-    public static void removeConnection(String authToken) {
+    public void removeConnection(String authToken) {
         connections.remove(authToken);
     }
 }

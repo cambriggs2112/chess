@@ -6,7 +6,7 @@ public class LeaveCommand extends UserGameCommand {
     private final ChessGame.TeamColor color;
 
     public LeaveCommand(String authToken, Integer gameID, ChessGame.TeamColor color) {
-        super(CommandType.MAKE_MOVE, authToken, gameID);
+        super(CommandType.LEAVE, authToken, gameID);
         this.color = color;
     }
 

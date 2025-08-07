@@ -85,10 +85,8 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        if (board.getPiece(startPosition) == null) {
-            return null;
-        } else {
-            ArrayList<ChessMove> result = new ArrayList<ChessMove>();
+        ArrayList<ChessMove> result = new ArrayList<ChessMove>();
+        if (board.getPiece(startPosition) != null) {
             ChessPiece startPiece = board.getPiece(startPosition);
             // add normal moves
             for (ChessMove move : startPiece.pieceMoves(board, startPosition)) {
@@ -162,8 +160,8 @@ public class ChessGame {
                     }
                 }
             }
-            return result;
         }
+        return result;
     }
 
     /**

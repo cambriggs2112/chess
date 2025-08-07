@@ -12,7 +12,11 @@ import java.io.*;
 
 @WebSocket
 public class WebSocketServer {
-    public WebSocketServer() {}
+    private ConnectionManager connectionManager;
+
+    public WebSocketServer() {
+        this.connectionManager = new ConnectionManager();
+    }
 
     @OnWebSocketMessage
     public void onMessage(Session session, String message) throws IOException {
@@ -24,25 +28,25 @@ public class WebSocketServer {
             SQLAuthDAO auths = new SQLAuthDAO();
             SQLGameDAO games = new SQLGameDAO();
             if (auths.getAuth(authToken) == null) {
-                ConnectionManager.broadcastOne(authToken, new ErrorMessage("ERROR: Auth token is unknown."));
+                connectionManager.broadcastOne(authToken, new ErrorMessage("ERROR: Auth token is unknown."));
                 return;
             }
             if (games.getGame(gameID) == null) {
-                ConnectionManager.broadcastOne(authToken, new ErrorMessage("ERROR: Game ID is unknown."));
+                connectionManager.broadcastOne(authToken, new ErrorMessage("ERROR: Game ID is unknown."));
                 return;
             }
             AuthData thisAuth = auths.getAuth(authToken);
             GameData thisGame = games.getGame(gameID);
             ChessGame updatedGame = thisGame.game();
+            connectionManager.addConnection(authToken, gameID, session);
             switch (command.getCommandType()) {
                 case CONNECT:
                     ConnectCommand connCommand = gson.fromJson(message, ConnectCommand.class);
-                    ConnectionManager.addConnection(authToken, gameID, session);
-                    ConnectionManager.broadcastOne(authToken, new LoadGameMessage(thisGame.game()));
+                    connectionManager.broadcastOne(authToken, new LoadGameMessage(thisGame.game(), null));
                     if (connCommand.getColor() == null) {
-                        ConnectionManager.broadcastAllExcept(authToken, new NotificationMessage(thisAuth.username() + " joined as an observer."));
+                        connectionManager.broadcastAllExcept(authToken, new NotificationMessage(thisAuth.username() + " joined as an observer."));
                     } else {
-                        ConnectionManager.broadcastAllExcept(authToken, new NotificationMessage(thisAuth.username() + " joined as the " + connCommand.getColor() + " player."));
+                        connectionManager.broadcastAllExcept(authToken, new NotificationMessage(thisAuth.username() + " joined as the " + connCommand.getColor() + " player."));
                     }
                     break;
                 case MAKE_MOVE:
@@ -51,39 +55,34 @@ public class WebSocketServer {
                     try {
                         updatedGame.makeMove(move);
                         games.updateGame(new GameData(gameID, thisGame.whiteUsername(), thisGame.blackUsername(), thisGame.gameName(), updatedGame));
-                        ConnectionManager.broadcastAllExcept(null, new LoadGameMessage(updatedGame));
-                        ConnectionManager.broadcastAllExcept(authToken, new NotificationMessage(thisAuth.username() + " made move " + move + "."));
+                        connectionManager.broadcastAllExcept(null, new LoadGameMessage(updatedGame, move));
+                        connectionManager.broadcastAllExcept(authToken, new NotificationMessage(thisAuth.username() + " made move " + move + "."));
                         if (updatedGame.isInCheckmate(ChessGame.TeamColor.WHITE)) {
-                            ConnectionManager.broadcastAllExcept(null, new NotificationMessage("WHITE team (" + thisGame.whiteUsername() + ") is in checkmate!"));
+                            connectionManager.broadcastAllExcept(null, new NotificationMessage("WHITE team (" + thisGame.whiteUsername() + ") is in checkmate!"));
                             updatedGame.endGame();
                         } else if (updatedGame.isInCheck(ChessGame.TeamColor.WHITE)) {
-                            ConnectionManager.broadcastAllExcept(null, new NotificationMessage("WHITE team (" + thisGame.whiteUsername() + ") is in check!"));
+                            connectionManager.broadcastAllExcept(null, new NotificationMessage("WHITE team (" + thisGame.whiteUsername() + ") is in check!"));
                         } else if (updatedGame.isInStalemate(ChessGame.TeamColor.WHITE)) {
-                            ConnectionManager.broadcastAllExcept(null, new NotificationMessage("WHITE team (" + thisGame.whiteUsername() + ") is in stalemate!"));
-                            if (updatedGame.isInStalemate(ChessGame.TeamColor.BLACK)) {
-                                updatedGame.endGame();
-                            }
+                            connectionManager.broadcastAllExcept(null, new NotificationMessage("WHITE team (" + thisGame.whiteUsername() + ") is in stalemate!"));
+                            updatedGame.endGame();
                         }
                         if (updatedGame.isInCheckmate(ChessGame.TeamColor.BLACK)) {
-                            ConnectionManager.broadcastAllExcept(null, new NotificationMessage("BLACK team (" + thisGame.blackUsername() + ") is in checkmate!"));
+                            connectionManager.broadcastAllExcept(null, new NotificationMessage("BLACK team (" + thisGame.blackUsername() + ") is in checkmate!"));
                             updatedGame.endGame();
                         } else if (updatedGame.isInCheck(ChessGame.TeamColor.BLACK)) {
-                            ConnectionManager.broadcastAllExcept(null, new NotificationMessage("BLACK team (" + thisGame.blackUsername() + ") is in check!"));
+                            connectionManager.broadcastAllExcept(null, new NotificationMessage("BLACK team (" + thisGame.blackUsername() + ") is in check!"));
                         } else if (updatedGame.isInStalemate(ChessGame.TeamColor.BLACK)) {
-                            ConnectionManager.broadcastAllExcept(null, new NotificationMessage("BLACK team (" + thisGame.blackUsername() + ") is in stalemate!"));
-                            if (updatedGame.isInStalemate(ChessGame.TeamColor.WHITE)) {
-                                updatedGame.endGame();
-                            }
+                            connectionManager.broadcastAllExcept(null, new NotificationMessage("BLACK team (" + thisGame.blackUsername() + ") is in stalemate!"));
+                            updatedGame.endGame();
                         }
                     } catch (InvalidMoveException e) {
-                        ConnectionManager.broadcastOne(authToken, new ErrorMessage("ERROR: " + e.getMessage()));
+                        connectionManager.broadcastOne(authToken, new ErrorMessage("ERROR: " + e.getMessage()));
                     }
-                    // check move -> if valid, update and send board to all
                     break;
                 case LEAVE:
                     LeaveCommand leaveCommand = gson.fromJson(message, LeaveCommand.class);
-                    ConnectionManager.removeConnection(authToken);
-                    ConnectionManager.broadcastAllExcept(authToken, new NotificationMessage(thisAuth.username() + " left the game."));
+                    connectionManager.removeConnection(authToken);
+                    connectionManager.broadcastAllExcept(authToken, new NotificationMessage(thisAuth.username() + " left the game."));
                     if (leaveCommand.getColor() == ChessGame.TeamColor.WHITE) {
                         games.updateGame(new GameData(gameID, null, thisGame.blackUsername(), thisGame.gameName(), thisGame.game()));
                     } else {
@@ -94,10 +93,10 @@ public class WebSocketServer {
                     ResignCommand resignCommand = gson.fromJson(message, ResignCommand.class);
                     updatedGame.endGame();
                     games.updateGame(new GameData(gameID, thisGame.whiteUsername(), thisGame.blackUsername(), thisGame.gameName(), updatedGame));
-                    ConnectionManager.broadcastAllExcept(null, new NotificationMessage(resignCommand.getColor() + " team (" + thisAuth.username() + ") resigned!"));
+                    connectionManager.broadcastAllExcept(null, new NotificationMessage(resignCommand.getColor() + " team (" + thisAuth.username() + ") resigned!"));
             }
         } catch (DataAccessException e) {
-            ConnectionManager.broadcastOne(authToken, new ErrorMessage("ERROR: " + e.getMessage()));
+            connectionManager.broadcastOne(authToken, new ErrorMessage("ERROR: " + e.getMessage()));
         }
     }
 }

@@ -6,7 +6,7 @@ public class ConnectCommand extends UserGameCommand {
     private final ChessGame.TeamColor color;
 
     public ConnectCommand(String authToken, Integer gameID, ChessGame.TeamColor color) {
-        super(CommandType.MAKE_MOVE, authToken, gameID);
+        super(CommandType.CONNECT, authToken, gameID);
         this.color = color;
     }
 
