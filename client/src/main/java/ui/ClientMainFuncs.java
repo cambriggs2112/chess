@@ -377,7 +377,10 @@ public class ClientMainFuncs {
                     } // Note: KING or PAWN is never a valid promotion.
                 }
             } else if (arguments.getFirst().equalsIgnoreCase("resign") && color != null) {
-                ws.sendCommand(new UserGameCommand(UserGameCommand.CommandType.RESIGN, authToken, gameID));
+                System.out.println("Are you sure you want to resign? Enter \"Yes\" to confirm or anything else to cancel.");
+                if (input.nextLine().equalsIgnoreCase("yes")) {
+                    ws.sendCommand(new UserGameCommand(UserGameCommand.CommandType.RESIGN, authToken, gameID));
+                }
             } else if (arguments.getFirst().equalsIgnoreCase("highlight")) {
                 if (arguments.size() < 2) {
                     System.out.println("\u001b[38;5;160m  Usage: highlight <SOURCE>\u001b[39m");

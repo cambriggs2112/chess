@@ -126,7 +126,8 @@ public class WebSocketServer {
                 thisAuth.username() + " left the game."));
         if (userColor == ChessGame.TeamColor.WHITE) {
             games.updateGame(new GameData(thisGame.gameID(), null, thisGame.blackUsername(), thisGame.gameName(), thisGame.game()));
-        } else {
+        }
+        if (userColor == ChessGame.TeamColor.BLACK) {
             games.updateGame(new GameData(thisGame.gameID(), thisGame.whiteUsername(), null, thisGame.gameName(), thisGame.game()));
         }
     }
